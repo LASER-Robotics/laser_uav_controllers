@@ -1,0 +1,96 @@
+#ifndef LASER_UAV_CONTROLLERS__NMPC_CONTROLLER_HPP
+#define LASER_UAV_CONTROLLERS__NMPC_CONTROLLER_HPP
+
+#include "acados/utils/math.h"
+#include <acados_c/ocp_nlp_interface.h>
+#include <acados_c/external_function_interface.h>
+#include <acados/ocp_nlp/ocp_nlp_constraints_bgh.h>
+#include <acados/ocp_nlp/ocp_nlp_cost_ls.h>
+
+#include <blasfeo/include/blasfeo_d_aux.h>
+#include <blasfeo/include/blasfeo_d_aux_ext_dep.h>
+
+#include <uav_model/uav_model.h>
+#include <acados_solver_uav.h>
+
+#include <geometry_msgs/msg/pose.hpp>
+#include <nav_msgs/msg/odometry.hpp>
+
+namespace laser_uav_controllers
+{
+
+#define N UAV_N
+#define NX 13
+#define NU 4
+#define NY 17
+#define NYN 13
+
+/* ocp_nlp_in     *nlp_in; */
+/* ocp_nlp_out    *nlp_out; */
+/* ocp_nlp_solver *nlp_solver; */
+/* void           *nlp_opts; */
+/* ocp_nlp_config *nlp_config; */
+/* ocp_nlp_dims   *nlp_dims; */
+
+class NmpcController {
+public:
+  /* NmpcController(int n_horizon, double mass, Eigen::VectorXd weights, double wn_factor); */
+  NmpcController();
+
+  /* laser_msgs::msg::ThrustAndTorque getCorrection(geometry::msg::Pose reference, const nav_msgs::msg::Odometry &msg); */
+  void getCorrection(geometry_msgs::msg::Pose reference, const nav_msgs::msg::Odometry msg);
+
+private:
+  enum states
+  {
+    x   = 0,
+    y   = 1,
+    z   = 2,
+    qw  = 3,
+    qx  = 4,
+    qy  = 5,
+    qz  = 6,
+    vbx = 7,
+    vby = 8,
+    vbz = 9,
+    wx  = 10,
+    wy  = 11,
+    wz  = 12
+  };
+
+  struct solver_output
+  {
+    double status, KKT_res, cpu_time;
+    double u1[NU];
+    double x1[NX];
+    double xi[NU];
+    double ui[NU];
+  };
+
+  struct solver_input
+  {
+    double x0[NX];
+    double yref[(NY * N)];
+    double yref_e[NYN];
+    double w[NY * NY];
+    double wn[NX * NX];
+  };
+
+  uav_solver_capsule *acados_ocp_capsule;
+  ocp_nlp_in         *nlp_in;
+  ocp_nlp_out        *nlp_out;
+  ocp_nlp_solver     *nlp_solver;
+  void               *nlp_opts;
+  ocp_nlp_config     *nlp_config;
+  ocp_nlp_dims       *nlp_dims;
+
+  solver_input  acados_in;
+  solver_output acados_out;
+
+  double mass_;
+  double ct_;
+  double uss_;
+};
+}  // namespace laser_uav_controllers
+
+#endif

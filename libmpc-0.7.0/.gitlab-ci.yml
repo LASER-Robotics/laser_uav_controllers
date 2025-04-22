@@ -1,0 +1,49 @@
+stages:
+  - test
+  - publish
+
+test:
+  image: ubuntu:latest
+  stage: test
+  script:
+    - apt-get update
+    - apt-get install -y git lcov build-essential cmake
+    - apt-get install -y python3-pip python3-venv
+    - sh configure.sh
+    - git submodule update --init --recursive
+    - mkdir build
+    - cd build
+    - cmake -DCMAKE_BUILD_TYPE=Debug ..
+    - make
+    - make test
+    - make install
+    - cd ..
+    - mkdir -p examples/build
+    - cd examples/build
+    - cmake ..
+    - make
+    - for file in ./bin/*; do $file; done
+    - cd ../..
+    - cd python
+    - python3 -m venv .
+    - source ./bin/activate
+    - pip install -r requirements.txt
+    - ./build.sh
+  only:
+    - merge_requests
+
+pages:
+  image: musicscience37/sphinx-doxygen
+  stage: publish
+  script:
+    - mkdir -p web/doxygen-build web/sphinx-build
+    - doxygen Doxyfile
+    - pip3 install sphinx breathe sphinx_rtd_theme
+    - sphinx-build -b html docs/source/ web/sphinx-build
+    - mv web/doxygen-build/html/ web/sphinx-build/doxygen
+    - mv web/sphinx-build public/
+  artifacts:
+    paths:
+      - public
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
