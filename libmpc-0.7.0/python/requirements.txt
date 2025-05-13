@@ -1,4 +1,0 @@
-pybind11
-setuptools 
-wheel
-twine

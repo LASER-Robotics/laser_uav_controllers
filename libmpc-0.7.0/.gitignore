@@ -1,8 +1,0 @@
-build/
-bin/
-lib/
-web/
-deps/
-examples/build/
-python/build/
-docs/source/_build

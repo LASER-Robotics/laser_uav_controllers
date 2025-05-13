@@ -1,69 +1,113 @@
 #ifndef LASER_UAV_CONTROLLERS__NMPC_CONTROLLER_HPP
 #define LASER_UAV_CONTROLLERS__NMPC_CONTROLLER_HPP
 
-#include <Eigen/Dense>
-#include <mpc/NLMPC.hpp>
-#include <mpc/Utils.hpp>
-#include <mpc/Types.hpp>
+#include "acados/utils/math.h"
+#include <acados_c/ocp_nlp_interface.h>
+#include <acados_c/external_function_interface.h>
+#include <acados/ocp_nlp/ocp_nlp_constraints_bgh.h>
+#include <acados/ocp_nlp/ocp_nlp_cost_ls.h>
+
+#include <blasfeo/include/blasfeo_d_aux.h>
+#include <blasfeo/include/blasfeo_d_aux_ext_dep.h>
+
+#include <quadrotor_ode_model/quadrotor_ode_model.h>
+#include <acados_solver_quadrotor_ode.h>
 
 #include <geometry_msgs/msg/pose.hpp>
 #include <nav_msgs/msg/odometry.hpp>
 
+#include <laser_msgs/msg/attitude_rates_and_thrust.hpp>
+
+#include <iostream>
+
 namespace laser_uav_controllers
 {
 
-constexpr int _nx_  = 13;
-constexpr int _ny_  = 13;
-constexpr int _nu_  = 4;
-constexpr int _nxh_ = 10;
-constexpr int _nuh_ = 4;
-constexpr int _ni_  = 0;
-constexpr int _ne_  = 0;
-#define _ts_ 0.1
-#define GRAVITY 9.8
-#define Ixx_ 0.4953
-#define Iyy_ 0.4953
-#define Izz_ 0.3413
-#define mass_ 2.76
-#define cq_ 4.39e-08
-#define ct_ 7.97e-08
-#define l_ 0.25455
-#define beta_ 0.4
+#define N QUADROTOR_ODE_N
+#define NX QUADROTOR_ODE_NX
+#define NU QUADROTOR_ODE_NU
+#define NY QUADROTOR_ODE_NY
+#define NYN QUADROTOR_ODE_NYN
+#define NP QUADROTOR_ODE_NP
+#define NBX0 QUADROTOR_ODE_NBX0
 
-#define X 0
-#define Y 1
-#define Z 2
-#define QW 3
-#define QX 4
-#define QY 5
-#define QZ 6
-#define VX 7
-#define VY 8
-#define VZ 9
-#define OX 10
-#define OY 11
-#define OZ 12
+#define GRAVITY 9.8
 
 class NmpcController {
 public:
-  /* NmpcController(int n_horizon, double mass, Eigen::VectorXd weights, double wn_factor); */
   NmpcController();
-  /* NmpcController(int a); */
 
-  /* laser_msgs::msg::ThrustAndTorque getCorrection(geometry::msg::Pose reference, const nav_msgs::msg::Odometry &msg); */
-  void setCostFunction();
-  void setUavDynamics();
-  void getCorrection(geometry_msgs::msg::Pose ref, const nav_msgs::msg::Odometry msg);
+  laser_msgs::msg::AttitudeRatesAndThrust getCorrection(geometry_msgs::msg::Pose reference, const nav_msgs::msg::Odometry msg);
 
 private:
-  mpc::cvec<_ny_>                                        reference;
-  mpc::NLMPC<_nx_, _nu_, _ny_, _nxh_, _nuh_, _ni_, _ne_> nlmpc_solver_;
-  /* mpc::NLMPC<> nlmpc_solver_; */
+  void setInitState();
+  void setInitSolution();
+  void setReference();
+  bool ocpSolver();
+  void printStats();
+  void getFirstControlInput();
+  void getFirstComputedStates();
+  void getAllComputedStates();
+  void getAllControlInputs();
 
-  Eigen::Matrix<double, 13, 13> Q;
-  /* double mass_; */
-  /* double ct_; */
-  double uss_;
+  enum states_e
+  {
+    x   = 0,
+    y   = 1,
+    z   = 2,
+    qw  = 3,
+    qx  = 4,
+    qy  = 5,
+    qz  = 6,
+    vbx = 7,
+    vby = 8,
+    vbz = 9,
+    wx  = 10,
+    wy  = 11,
+    wz  = 12
+  };
+
+  enum params_e
+  {
+    mass          = 0,
+    motor_pos_0_x = 1,
+    motor_pos_0_y = 2,
+    motor_pos_1_x = 3,
+    motor_pos_1_y = 4,
+    motor_pos_2_x = 5,
+    motor_pos_2_y = 6,
+    motor_pos_3_x = 7,
+    motor_pos_3_y = 8,
+    inertia_x     = 9,
+    inertia_y     = 10,
+    inertia_z     = 11,
+    c_tau         = 12,
+    drag_x        = 13,
+    drag_y        = 14,
+    drag_z        = 15,
+    qw_reference  = 16,
+    qx_reference  = 17,
+    qy_reference  = 18,
+    qz_reference  = 19
+  };
+
+  double x0_[NX];
+  double yref_[NYN];
+
+  double u0_[NU];
+  double x1_[NX];
+
+  double hover_thrust_;
+
+  double parameters_[NP];
+
+  quadrotor_ode_solver_capsule *acados_ocp_capsule;
+  ocp_nlp_in                   *nlp_in;
+  ocp_nlp_out                  *nlp_out;
+  ocp_nlp_solver               *nlp_solver;
+  void                         *nlp_opts;
+  ocp_nlp_config               *nlp_config;
+  ocp_nlp_dims                 *nlp_dims;
 };
 }  // namespace laser_uav_controllers
 
