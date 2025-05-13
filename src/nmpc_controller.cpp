@@ -287,22 +287,22 @@ NmpcController::NmpcController() {
 
 /* setInitState() //{ */
 void NmpcController::setInitState() {
-  /* int idxbx0[NBX0]; */
-  /* for (int i = 0; i < NBX0; i++) { */
-  /*   idxbx0[i] = i; */
-  /* } */
-  /* ocp_nlp_constraints_model_set(nlp_config, nlp_dims, nlp_in, nlp_out, 0, "idxbx", idxbx0); */
+  int idxbx0[NBX0];
+  for (int i = 0; i < NBX0; i++) {
+    idxbx0[i] = i;
+  }
+  ocp_nlp_constraints_model_set(nlp_config, nlp_dims, nlp_in, nlp_out, 0, "idxbx", idxbx0);
   ocp_nlp_constraints_model_set(nlp_config, nlp_dims, nlp_in, nlp_out, 0, "lbx", x0_);
   ocp_nlp_constraints_model_set(nlp_config, nlp_dims, nlp_in, nlp_out, 0, "ubx", x0_);
 
-  /* double max_thrust = 15.0; */
-  /* double min_thrust = 0.0; */
-  /* ocp_nlp_constraints_model_set(nlp_config, nlp_dims, nlp_in, nlp_out, 0, "lbu", &min_thrust); */
-  /* ocp_nlp_constraints_model_set(nlp_config, nlp_dims, nlp_in, nlp_out, 0, "ubu", &max_thrust); */
+  double max_thrust[4] = {15.7, 15.7, 15.7, 15.7};
+  double min_thrust[4] = {0.0};
+  ocp_nlp_constraints_model_set(nlp_config, nlp_dims, nlp_in, nlp_out, 0, "lbu", &min_thrust);
+  ocp_nlp_constraints_model_set(nlp_config, nlp_dims, nlp_in, nlp_out, 0, "ubu", &max_thrust);
 
-  /* double total_max_thrust = max_thrust*4; */
-  /* ocp_nlp_constraints_model_set(nlp_config, nlp_dims, nlp_in, nlp_out, 0, "lg", &min_thrust); */
-  /* ocp_nlp_constraints_model_set(nlp_config, nlp_dims, nlp_in, nlp_out, 0, "ug", &total_max_thrust); */
+  double total_max_thrust[4] = {max_thrust[0] * 4, max_thrust[0] * 4, max_thrust[0] * 4, max_thrust[0] * 4};
+  ocp_nlp_constraints_model_set(nlp_config, nlp_dims, nlp_in, nlp_out, 0, "lg", &min_thrust);
+  ocp_nlp_constraints_model_set(nlp_config, nlp_dims, nlp_in, nlp_out, 0, "ug", &total_max_thrust);
 }
 //}
 
@@ -387,7 +387,7 @@ void NmpcController::printStats() {
 
 ///* getFirstControlInput() //{ */
 void NmpcController::getFirstControlInput() {
-  ocp_nlp_out_get(nlp_config, nlp_dims, nlp_out, 1, "u", &u0_);
+  ocp_nlp_out_get(nlp_config, nlp_dims, nlp_out, 0, "u", &u0_);
 }
 //}
 
@@ -486,10 +486,29 @@ laser_msgs::msg::AttitudeRatesAndThrust NmpcController::getCorrection(geometry_m
   ocp_nlp_get(nlp_solver, "time_tot", &elapsed_time);
 
   laser_msgs::msg::AttitudeRatesAndThrust input_control;
-  input_control.roll_rate               = x1_[wx];
-  input_control.pitch_rate              = x1_[wy];
-  input_control.yaw_rate                = x1_[wz];
-  input_control.total_thrust_normalized = (u0_[0] + u0_[1] + u0_[2] + u0_[3]) / ((hover_thrust_ * 4) + 15);
+  input_control.roll_rate  = x1_[wx];
+  input_control.pitch_rate = x1_[wy];
+  input_control.yaw_rate   = x1_[wz];
+  /* input_control.total_thrust_normalized = sqrt((u0_[0] + u0_[1] + u0_[2] + u0_[3])) / (62.8); // 62.8 e a soma dos 4 motores produzindo thrust em 85% isso
+   * para o x500 */
+
+  // parametros para modelar curva de throtle retirados do mrs para o x500
+  double a = 0.27665;
+  double b = -0.19642;
+  /* double T = sqrt((u0_[0] + u0_[1] + u0_[2] + u0_[3]) / 62.8); */
+  /* double T = (u0_[0] + u0_[1] + u0_[2] + u0_[3]) / 62.8; */
+    /* double T = sqrt((u0_[0] + u0_[1] + u0_[2] + u0_[3]) / 44); */
+  double T = (a * sqrt(((u0_[0] + u0_[1] + u0_[2] + u0_[3])/4))) + b;
+  /* double T0 = (a * sqrt((u0_[0]) / GRAVITY)) + b; */
+  /* double T1 = (a * sqrt((u0_[1]) / GRAVITY)) + b; */
+  /* double T2 = (a * sqrt((u0_[2]) / GRAVITY)) + b; */
+  /* double T3 = (a * sqrt((u0_[3]) / GRAVITY)) + b; */
+  /* double T = T0 + T1 + T2 + T3; */
+  input_control.total_thrust_normalized = T;
+  /* input_control.total_thrust_normalized = */
+  /*     ((a * sqrt(u0_[0] + u0_[1] + u0_[2] + u0_[3])) + b) > 1 */
+  /*         ? 1 */
+  /*         : (a * sqrt(u0_[0] + u0_[1] + u0_[2] + u0_[3])) + b;  // 62.8 e a soma dos 4 motores produzindo thrust em 85% isso para o x500 */
 
   std::cout << "First Control Input" << std::endl;
   std::cout << "elapsed_time   " << elapsed_time << std::endl;

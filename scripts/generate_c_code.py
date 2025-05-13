@@ -33,8 +33,8 @@ ocp.parameter_values = np.array([mass, motor_pos_0[0], motor_pos_0[1], motor_pos
 # Constraints
 omega_max = np.array([10.0, 10.0, 4.0])  # [rad/s]
 thrust_min = 0.0       # [N]
-thrust_max = 15.0       # [N] per motor
-thrust_total_max = 68.0 # [N] total thrust
+thrust_max = 15.7       # [N] per motor
+thrust_total_max = 62.8 # [N] total thrust
 thrust_total_min = 0.0 # [N] total thrust
 
 # set constraints

@@ -665,10 +665,10 @@ void quadrotor_ode_acados_setup_nlp_in(quadrotor_ode_solver_capsule* capsule, co
     double* lubu = calloc(2*NBU, sizeof(double));
     double* lbu = lubu;
     double* ubu = lubu + NBU;
-    ubu[0] = 15;
-    ubu[1] = 15;
-    ubu[2] = 15;
-    ubu[3] = 15;
+    ubu[0] = 15.7;
+    ubu[1] = 15.7;
+    ubu[2] = 15.7;
+    ubu[3] = 15.7;
 
     for (int i = 0; i < N; i++)
     {
@@ -721,7 +721,7 @@ void quadrotor_ode_acados_setup_nlp_in(quadrotor_ode_solver_capsule* capsule, co
     D[0+NG * 1] = 1;
     D[0+NG * 2] = 1;
     D[0+NG * 3] = 1;
-    ug[0] = 68;
+    ug[0] = 62.8;
 
     for (int i = 0; i < N; i++)
     {
