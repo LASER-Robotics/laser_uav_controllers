@@ -59,7 +59,7 @@ struct quadrotor_t
 struct acados_t
 {
   std::vector<double> Q;
-  double R;
+  double              R;
 };
 //}
 

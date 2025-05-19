@@ -11,7 +11,10 @@ NmpcController::NmpcController() {
 NmpcController::NmpcController(quadrotor_t quadrotor_params, acados_t acados_params) {
   std::cout << "creating acados ocp solver" << std::endl;
   acados_ocp_capsule = quadrotor_ode_acados_create_capsule();
-  int status         = quadrotor_ode_acados_create_with_discretization(acados_ocp_capsule, N, nullptr);
+
+  double *dt = new double[N];
+  std::fill_n(dt, N, 2.0 / N);
+  int status = quadrotor_ode_acados_create_with_discretization(acados_ocp_capsule, N, dt);
 
   if (status) {
     printf("creation of acados ocp solver returned status %d. Exiting.\n", status);
@@ -34,6 +37,12 @@ NmpcController::NmpcController(quadrotor_t quadrotor_params, acados_t acados_par
   parameters_[params_e::drag_x]             = quadrotor_params.drag_x;
   parameters_[params_e::drag_y]             = quadrotor_params.drag_y;
   parameters_[params_e::drag_z]             = quadrotor_params.drag_z;
+
+  // --- Set Nominal Quaternion in Initialize
+  parameters_[params_e::qw_reference] = 1;
+  parameters_[params_e::qx_reference] = 0;
+  parameters_[params_e::qy_reference] = 0;
+  parameters_[params_e::qz_reference] = 0;
 
   motor_curve_a_ = quadrotor_params.motor_curve_a;
   motor_curve_b_ = quadrotor_params.motor_curve_b;
@@ -135,30 +144,36 @@ void NmpcController::setReference() {
   double yref_for_acados[NY] = {0};
 
   // --- Set Position Reference
-  for (int i = 0; i < 3; i++) {
-    yref_for_acados[i] = yref_[i];
-  }
+  yref_for_acados[0] = yref_[states_e::x];
+  yref_for_acados[1] = yref_[states_e::y];
+  yref_for_acados[2] = yref_[states_e::z];
 
-  // --- Set Attitude Error Reference
-  for (int i = 3; i < 6; i++) {
-    yref_for_acados[i] = 0;
-  }
+  // --- Set Attitude Error
+  yref_for_acados[3] = 0;
+  yref_for_acados[4] = 0;
+  yref_for_acados[5] = 0;
 
-  // --- Set Velocity and Angular Velocity Reference
-  for (int i = 6; i < NYN; i++) {
-    yref_for_acados[i] = yref_[i + 1];
-  }
-
-  // --- Set Thrust Reference
-  for (int i = 0; i < NU; i++) {
-    yref_for_acados[NYN + i] = hover_thrust_;
-  }
-
-  // --- Set Reference Quaternion in Acados
+  // --- Set Quaternion Reference
   parameters_[params_e::qw_reference] = yref_[states_e::qw];
   parameters_[params_e::qx_reference] = yref_[states_e::qx];
   parameters_[params_e::qy_reference] = yref_[states_e::qy];
   parameters_[params_e::qz_reference] = yref_[states_e::qz];
+
+  // --- Set Speed Reference
+  yref_for_acados[6] = 0.00;
+  yref_for_acados[7] = 0.00;
+  yref_for_acados[8] = 0.00;
+
+  // --- Set Angular Speed Reference
+  yref_for_acados[9]  = 0.00;
+  yref_for_acados[10] = 0.00;
+  yref_for_acados[11] = 0.00;
+
+  // --- Set Initial Thrust Reference
+  yref_for_acados[12] = hover_thrust_;
+  yref_for_acados[13] = hover_thrust_;
+  yref_for_acados[14] = hover_thrust_;
+  yref_for_acados[15] = hover_thrust_;
 
   // --- Set Reference in Acados
   for (int i = 0; i <= N; i++) {
@@ -187,17 +202,24 @@ bool NmpcController::ocpSolver() {
 void NmpcController::printStatistics() {
   int    sqp_iter, stat_m, stat_n;
   double elapsed_time;
+  double nlp_res;
+  double cost_value;
   double stat[1200];
+
+  ocp_nlp_eval_cost(acados_ocp_capsule->nlp_solver, acados_ocp_capsule->nlp_in, acados_ocp_capsule->nlp_out);
 
   ocp_nlp_get(acados_ocp_capsule->nlp_solver, "sqp_iter", &sqp_iter);
   ocp_nlp_get(acados_ocp_capsule->nlp_solver, "stat_n", &stat_n);
   ocp_nlp_get(acados_ocp_capsule->nlp_solver, "stat_m", &stat_m);
   ocp_nlp_get(acados_ocp_capsule->nlp_solver, "statistics", stat);
   ocp_nlp_get(acados_ocp_capsule->nlp_solver, "time_tot", &elapsed_time);
+  ocp_nlp_get(acados_ocp_capsule->nlp_solver, "nlp_res", &nlp_res);
+  ocp_nlp_get(acados_ocp_capsule->nlp_solver, "cost_value", &cost_value);
 
   int qp_iter = (int)stat[2 + 1 * 3];
 
   std::cout << "qp iterations: " << qp_iter << ", time elapsed: " << elapsed_time * 1000 << " ms." << std::endl;
+  std::cout << "nlp result: " << nlp_res << ", cost value: " << cost_value << std::endl;
 }
 //}
 
@@ -297,7 +319,7 @@ laser_msgs::msg::AttitudeRatesAndThrust NmpcController::getCorrection(geometry_m
 
   // --- Solver OCP
   if (ocpSolver()) {
-    /* printStatistics(); */
+    printStatistics();
 
     // --- Take the optimum control input and computed state
     getFirstControlInput();

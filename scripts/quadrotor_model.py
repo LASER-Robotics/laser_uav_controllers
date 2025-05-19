@@ -14,38 +14,11 @@ def rotate_quaternion(q1,v1):
     return vertcat(ans[1,:], ans[2,:], ans[3,:]) # to covert to 3x1 vec
 
 def quaternion_error(q, q_ref):
-    q_aux = vertcat(q[0, :] *
-                    q_ref[0, :] +
-                    q[1, :] *
-                    q_ref[1, :] +
-                    q[2, :] *
-                    q_ref[2, :] +
-                    q[3, :] *
-                    q_ref[3, :], -
-                    q[1, :] *
-                    q_ref[0, :] +
-                    q[0, :] *
-                    q_ref[1, :] +
-                    q[3, :] *
-                    q_ref[2, :] -
-                    q[2, :] *
-                    q_ref[3, :], -
-                    q[2, :] *
-                    q_ref[0, :] -
-                    q[3, :] *
-                    q_ref[1, :] +
-                    q[0, :] *
-                    q_ref[2, :] +
-                    q[1, :] *
-                    q_ref[3, :], -
-                    q[3, :] *
-                    q_ref[0, :] +
-                    q[2, :] *
-                    q_ref[1, :] -
-                    q[1, :] *
-                    q_ref[2, :] +
-                    q[0, :] *
-                    q_ref[3, :])
+    q_aux = vertcat(q[0, :] * q_ref[0, :] + q[1, :] * q_ref[1, :] + q[2, :] * q_ref[2, :] + q[3, :] * q_ref[3, :], 
+                    - q[1, :] * q_ref[0, :] + q[0, :] * q_ref[1, :] + q[3, :] * q_ref[2, :] - q[2, :] * q_ref[3, :], 
+                    - q[2, :] * q_ref[0, :] - q[3, :] * q_ref[1, :] + q[0, :] * q_ref[2, :] + q[1, :] * q_ref[3, :], 
+                    - q[3, :] * q_ref[0, :] + q[2, :] * q_ref[1, :] - q[1, :] * q_ref[2, :] + q[0, :] * q_ref[3, :])
+    
     # attitude errors. SQRT have small quantities added (1e-3) to alleviate the derivative
     # not being defined at zero, and also because it's in the denominator
     q_att_denom = sqrt(q_aux[0] * q_aux[0] + q_aux[3] * q_aux[3] + 1e-3)

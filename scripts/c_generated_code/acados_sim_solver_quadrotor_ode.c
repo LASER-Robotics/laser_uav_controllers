@@ -73,7 +73,7 @@ int quadrotor_ode_acados_sim_create(quadrotor_ode_sim_solver_capsule * capsule)
     const int np = QUADROTOR_ODE_NP;
     bool tmp_bool;
 
-    double Tsim = 0.05;
+    double Tsim = 0.06666666666666667;
 
     external_function_opts ext_fun_opts;
     external_function_opts_set_to_default(&ext_fun_opts);

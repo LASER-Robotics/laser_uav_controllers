@@ -64,7 +64,7 @@
 #define QUADROTOR_ODE_NY0    16
 #define QUADROTOR_ODE_NY     16
 #define QUADROTOR_ODE_NYN    12
-#define QUADROTOR_ODE_N      20
+#define QUADROTOR_ODE_N      30
 #define QUADROTOR_ODE_NH     0
 #define QUADROTOR_ODE_NHN    0
 #define QUADROTOR_ODE_NH0    0
