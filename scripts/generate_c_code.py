@@ -31,7 +31,7 @@ motor_pos_3 = [0.15, 0.15]
 ocp.parameter_values = np.array([mass, motor_pos_0[0], motor_pos_0[1], motor_pos_1[0], motor_pos_1[1], motor_pos_2[0], motor_pos_2[1], motor_pos_3[0], motor_pos_3[1],  inertia[0], inertia[1], inertia[2], C_tau, C_drag[0], C_drag[1], C_drag[2], q_ref_init[0], q_ref_init[1], q_ref_init[2], q_ref_init[3]])
 
 # Constraints
-omega_max = np.array([10.0, 10.0, 4.0])  # [rad/s]
+omega_max = np.array([1.57, 1.57, 4.0])  # [rad/s]
 thrust_min = 0.0       # [N]
 thrust_max = 15.7       # [N] per motor
 thrust_total_max = 62.8 # [N] total thrust

@@ -18,85 +18,92 @@ NmpcController::NmpcController(quadrotor_t quadrotor_params, acados_t acados_par
     exit(1);
   }
 
-  parameters_[0]  = quadrotor_params.mass;
-  parameters_[1]  = quadrotor_params.motor_position_0[0];
-  parameters_[2]  = quadrotor_params.motor_position_0[1];
-  parameters_[3]  = quadrotor_params.motor_position_1[0];
-  parameters_[4]  = quadrotor_params.motor_position_1[1];
-  parameters_[5]  = quadrotor_params.motor_position_2[0];
-  parameters_[6]  = quadrotor_params.motor_position_2[1];
-  parameters_[7]  = quadrotor_params.motor_position_3[0];
-  parameters_[8]  = quadrotor_params.motor_position_3[1];
-  parameters_[9]  = quadrotor_params.inertia_x;
-  parameters_[10] = quadrotor_params.inertia_y;
-  parameters_[11] = quadrotor_params.inertia_z;
-  parameters_[12] = quadrotor_params.c_tau;
-  parameters_[13] = quadrotor_params.drag_x;
-  parameters_[14] = quadrotor_params.drag_y;
-  parameters_[15] = quadrotor_params.drag_z;
+  parameters_[params_e::mass]               = quadrotor_params.mass;
+  parameters_[params_e::motor_position_0_x] = quadrotor_params.motor_position_0[0];
+  parameters_[params_e::motor_position_0_y] = quadrotor_params.motor_position_0[1];
+  parameters_[params_e::motor_position_1_x] = quadrotor_params.motor_position_1[0];
+  parameters_[params_e::motor_position_1_y] = quadrotor_params.motor_position_1[1];
+  parameters_[params_e::motor_position_2_x] = quadrotor_params.motor_position_2[0];
+  parameters_[params_e::motor_position_2_y] = quadrotor_params.motor_position_2[1];
+  parameters_[params_e::motor_position_3_x] = quadrotor_params.motor_position_3[0];
+  parameters_[params_e::motor_position_3_y] = quadrotor_params.motor_position_3[1];
+  parameters_[params_e::inertia_x]          = quadrotor_params.inertia_x;
+  parameters_[params_e::inertia_y]          = quadrotor_params.inertia_y;
+  parameters_[params_e::inertia_z]          = quadrotor_params.inertia_z;
+  parameters_[params_e::c_tau]              = quadrotor_params.c_tau;
+  parameters_[params_e::drag_x]             = quadrotor_params.drag_x;
+  parameters_[params_e::drag_y]             = quadrotor_params.drag_y;
+  parameters_[params_e::drag_z]             = quadrotor_params.drag_z;
+
+  motor_curve_a_ = quadrotor_params.motor_curve_a;
+  motor_curve_b_ = quadrotor_params.motor_curve_b;
 
   // --- Calculate Hover Thrust in Newtons
   hover_thrust_ = (parameters_[mass] * GRAVITY) / 4;
 
   // --- Set Weight Matrix for W
-  double W[NY * NY];
-  W[0 + (NY)*0]   = acados_params.Q[0];
-  W[1 + (NY)*1]   = acados_params.Q[0];
-  W[2 + (NY)*2]   = acados_params.Q[1];
-  W[3 + (NY)*3]   = acados_params.Q[2];
-  W[4 + (NY)*4]   = acados_params.Q[2];
-  W[5 + (NY)*5]   = acados_params.Q[3];
-  W[6 + (NY)*6]   = acados_params.Q[4];
-  W[7 + (NY)*7]   = acados_params.Q[4];
-  W[8 + (NY)*8]   = acados_params.Q[4];
-  W[9 + (NY)*9]   = acados_params.Q[5];
-  W[10 + (NY)*10] = acados_params.Q[5];
-  W[11 + (NY)*11] = acados_params.Q[5];
-  W[12 + (NY)*12] = acados_params.R;
-  W[13 + (NY)*13] = acados_params.R;
-  W[14 + (NY)*14] = acados_params.R;
-  W[15 + (NY)*15] = acados_params.R;
+  double W[NY * NY] = {};
+  W[(1 + NY) * 0]   = acados_params.Q[0];
+  W[(1 + NY) * 1]   = acados_params.Q[0];
+  W[(1 + NY) * 2]   = acados_params.Q[1];
+  W[(1 + NY) * 3]   = acados_params.Q[2];
+  W[(1 + NY) * 4]   = acados_params.Q[2];
+  W[(1 + NY) * 5]   = acados_params.Q[3];
+  W[(1 + NY) * 6]   = acados_params.Q[4];
+  W[(1 + NY) * 7]   = acados_params.Q[4];
+  W[(1 + NY) * 8]   = acados_params.Q[4];
+  W[(1 + NY) * 9]   = acados_params.Q[5];
+  W[(1 + NY) * 10]  = acados_params.Q[5];
+  W[(1 + NY) * 11]  = acados_params.Q[5];
+  W[(1 + NY) * 12]  = acados_params.R;
+  W[(1 + NY) * 13]  = acados_params.R;
+  W[(1 + NY) * 14]  = acados_params.R;
+  W[(1 + NY) * 15]  = acados_params.R;
 
   for (int i = 0; i < N; i++) {
     ocp_nlp_cost_model_set(acados_ocp_capsule->nlp_config, acados_ocp_capsule->nlp_dims, acados_ocp_capsule->nlp_in, i, "W", W);
   }
 
   // --- Set Weight Matrix For W_e
-  double W_e[NYN * NYN];
-  W_e[0 + (NYN)*0]   = acados_params.Q[0];
-  W_e[1 + (NYN)*1]   = acados_params.Q[0];
-  W_e[2 + (NYN)*2]   = acados_params.Q[1];
-  W_e[3 + (NYN)*3]   = acados_params.Q[2];
-  W_e[4 + (NYN)*4]   = acados_params.Q[2];
-  W_e[5 + (NYN)*5]   = acados_params.Q[3];
-  W_e[6 + (NYN)*6]   = acados_params.Q[4];
-  W_e[7 + (NYN)*7]   = acados_params.Q[4];
-  W_e[8 + (NYN)*8]   = acados_params.Q[4];
-  W_e[9 + (NYN)*9]   = acados_params.Q[5];
-  W_e[10 + (NYN)*10] = acados_params.Q[5];
-  W_e[11 + (NYN)*11] = acados_params.Q[5];
+  double W_e[NYN * NYN] = {};
+  W_e[(1 + NYN) * 0]    = acados_params.Q[0];
+  W_e[(1 + NYN) * 1]    = acados_params.Q[0];
+  W_e[(1 + NYN) * 2]    = acados_params.Q[1];
+  W_e[(1 + NYN) * 3]    = acados_params.Q[2];
+  W_e[(1 + NYN) * 4]    = acados_params.Q[2];
+  W_e[(1 + NYN) * 5]    = acados_params.Q[3];
+  W_e[(1 + NYN) * 6]    = acados_params.Q[4];
+  W_e[(1 + NYN) * 7]    = acados_params.Q[4];
+  W_e[(1 + NYN) * 8]    = acados_params.Q[4];
+  W_e[(1 + NYN) * 9]    = acados_params.Q[5];
+  W_e[(1 + NYN) * 10]   = acados_params.Q[5];
+  W_e[(1 + NYN) * 11]   = acados_params.Q[5];
 
   ocp_nlp_cost_model_set(acados_ocp_capsule->nlp_config, acados_ocp_capsule->nlp_dims, acados_ocp_capsule->nlp_in, N, "W", W_e);
 
   // --- Set Thrust Constraint
-  double lbu[4] = {quadrotor_params.thrust_min};
-  double ubu[4] = {quadrotor_params.thrust_max};
-
-  for (int i = 0; i < N; i++) {
-    ocp_nlp_constraints_model_set(acados_ocp_capsule->nlp_config, acados_ocp_capsule->nlp_dims, acados_ocp_capsule->nlp_in, acados_ocp_capsule->nlp_out, i,
-                                  "lbu", lbu);
-    ocp_nlp_constraints_model_set(acados_ocp_capsule->nlp_config, acados_ocp_capsule->nlp_dims, acados_ocp_capsule->nlp_in, acados_ocp_capsule->nlp_out, i,
-                                  "ubu", ubu);
-  }
-
-  // --- Set Total Thrust Constraint
   double lg = 0;
   double ug = quadrotor_params.total_thrust_max;
+  double lbu[4];
+  double ubu[4];
+  for (auto i = 0; i < 4; i++) {
+    lbu[i] = quadrotor_params.thrust_min;
+    ubu[i] = quadrotor_params.thrust_max;
+  }
 
   for (int i = 0; i < N; i++) {
     ocp_nlp_constraints_model_set(acados_ocp_capsule->nlp_config, acados_ocp_capsule->nlp_dims, acados_ocp_capsule->nlp_in, acados_ocp_capsule->nlp_out, i,
+
+                                  "lbu", lbu);
+    ocp_nlp_constraints_model_set(acados_ocp_capsule->nlp_config, acados_ocp_capsule->nlp_dims, acados_ocp_capsule->nlp_in, acados_ocp_capsule->nlp_out, i,
+
+                                  "ubu", ubu);
+
+    ocp_nlp_constraints_model_set(acados_ocp_capsule->nlp_config, acados_ocp_capsule->nlp_dims, acados_ocp_capsule->nlp_in, acados_ocp_capsule->nlp_out, i,
+
                                   "lg", &lg);
     ocp_nlp_constraints_model_set(acados_ocp_capsule->nlp_config, acados_ocp_capsule->nlp_dims, acados_ocp_capsule->nlp_in, acados_ocp_capsule->nlp_out, i,
+
                                   "ug", &ug);
   }
 }
@@ -186,7 +193,7 @@ void NmpcController::printStatistics() {
   ocp_nlp_get(acados_ocp_capsule->nlp_solver, "stat_n", &stat_n);
   ocp_nlp_get(acados_ocp_capsule->nlp_solver, "stat_m", &stat_m);
   ocp_nlp_get(acados_ocp_capsule->nlp_solver, "statistics", stat);
-  ocp_nlp_get(acados_ocp_capsule->nlp_solver, "elapsed_time", &elapsed_time);
+  ocp_nlp_get(acados_ocp_capsule->nlp_solver, "time_tot", &elapsed_time);
 
   int qp_iter = (int)stat[2 + 1 * 3];
 
@@ -290,7 +297,7 @@ laser_msgs::msg::AttitudeRatesAndThrust NmpcController::getCorrection(geometry_m
 
   // --- Solver OCP
   if (ocpSolver()) {
-    printStatistics();
+    /* printStatistics(); */
 
     // --- Take the optimum control input and computed state
     getFirstControlInput();
@@ -298,13 +305,13 @@ laser_msgs::msg::AttitudeRatesAndThrust NmpcController::getCorrection(geometry_m
   }
 
   // --- Fill the input control message to pixhawk
-  laser_msgs::msg::AttitudeRatesAndThrust input_control;
-  input_control.roll_rate               = x1_[states_e::wx];
-  input_control.pitch_rate              = x1_[states_e::wy];
-  input_control.yaw_rate                = x1_[states_e::wz];
-  input_control.total_thrust_normalized = thrustToThrotle();
+  laser_msgs::msg::AttitudeRatesAndThrust control_input;
+  control_input.roll_rate               = x1_[states_e::wx];
+  control_input.pitch_rate              = x1_[states_e::wy];
+  control_input.yaw_rate                = x1_[states_e::wz];
+  control_input.total_thrust_normalized = thrustToThrotle();
 
-  return input_control;
+  return control_input;
 }
 //}
 }  // namespace laser_uav_controllers

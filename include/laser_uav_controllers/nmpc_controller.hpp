@@ -58,7 +58,7 @@ struct quadrotor_t
 /* acados_t //{ */
 struct acados_t
 {
-  double Q[6];
+  std::vector<double> Q;
   double R;
 };
 //}

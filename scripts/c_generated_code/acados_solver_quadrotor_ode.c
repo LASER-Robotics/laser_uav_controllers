@@ -694,10 +694,10 @@ void quadrotor_ode_acados_setup_nlp_in(quadrotor_ode_solver_capsule* capsule, co
     double* lubx = calloc(2*NBX, sizeof(double));
     double* lbx = lubx;
     double* ubx = lubx + NBX;
-    lbx[0] = -10;
-    ubx[0] = 10;
-    lbx[1] = -10;
-    ubx[1] = 10;
+    lbx[0] = -1.57;
+    ubx[0] = 1.57;
+    lbx[1] = -1.57;
+    ubx[1] = 1.57;
     lbx[2] = -4;
     ubx[2] = 4;
 
