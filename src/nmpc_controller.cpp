@@ -218,8 +218,8 @@ void NmpcController::printStatistics() {
 
   int qp_iter = (int)stat[2 + 1 * 3];
 
-  std::cout << "qp iterations: " << qp_iter << ", time elapsed: " << elapsed_time * 1000 << " ms." << std::endl;
-  std::cout << "nlp result: " << nlp_res << ", cost value: " << cost_value << std::endl;
+  std::cout << "qp iterations: " << qp_iter << ", time elapsed: " << elapsed_time * 1000 << " ms."
+            << ", cost value: " << cost_value << std::endl;
 }
 //}
 
@@ -332,6 +332,10 @@ laser_msgs::msg::AttitudeRatesAndThrust NmpcController::getCorrection(geometry_m
   control_input.pitch_rate              = x1_[states_e::wy];
   control_input.yaw_rate                = x1_[states_e::wz];
   control_input.total_thrust_normalized = thrustToThrotle();
+
+  std::cout << "Control Input" << std::endl;
+  std::cout << "w1: " << u0_[control_input_e::w1] << ", w2: " << u0_[control_input_e::w2] << ", w3: " << u0_[control_input_e::w3]
+            << ", w4: " << u0_[control_input_e::w4] << std::endl;
 
   return control_input;
 }

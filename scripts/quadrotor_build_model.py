@@ -111,7 +111,7 @@ ocp.solver_options.hpipm_mode = "SPEED_ABS"
 
 dir_path = "."
 
-ocp.code_export_directory = dir_path + "/c_generated_code"
+ocp.code_export_directory = dir_path + "/quadrotor_ode"
 
 # this will generate c code
 ocp_solver = AcadosOcpSolver(ocp, json_file = f'{dir_path}/acados_ocp.json')

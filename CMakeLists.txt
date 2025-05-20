@@ -24,7 +24,7 @@ find_package(nav_msgs REQUIRED)
 
 set(acados_include "$ENV{ACADOS_SOURCE_DIR}/include")
 set(acados_lib "$ENV{ACADOS_SOURCE_DIR}/lib")
-set(full_model_build ${CMAKE_SOURCE_DIR}/scripts/c_generated_code)
+set(full_model_build ${CMAKE_SOURCE_DIR}/scripts/quadrotor_ode/)
 
 set(dependencies
 Eigen3
@@ -69,8 +69,13 @@ install(TARGETS laser_uav_controllers
   RUNTIME DESTINATION bin
 )
 
+install(FILES ${full_model_build}/libacados_ocp_solver_quadrotor_ode.so 
+  DESTINATION lib
+)
+
 install(DIRECTORY include/
   scripts
+  params
   DESTINATION include/
 )
 

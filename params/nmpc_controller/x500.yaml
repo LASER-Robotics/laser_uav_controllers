@@ -1,0 +1,43 @@
+/control_manager:
+  ros__parameters:
+    nmpc_controller:
+      quadrotor_parameters:
+        # Quadrotor Mass
+        mass: 2.76 # Kg
+
+          # Diagonal of Inertia Matrix
+        inertia: [0.4953, 0.4953, 0.3413]
+
+          # Torque constant {Ctau}
+        c_tau: 0.59 # This constant is the torque prop coefficient divided by thrust coefficient cq / ct
+
+          # Drag in x, y and z
+        drag: [0.0, 0.0, 0.0] # For now we dont use this
+
+          # Motors positions to the CoM
+        motors_positions: [-0.185, -0.18, 0.185, -0.18, -0.185, 0.18, 0.185, 0.18] # {motor_0_x, motor_0_y, motor_1_x, motor_1_y, ......}
+
+        # This is used to model the thrust x throtle curve for normalize input to the px4
+        quadratic_motor_model:
+          a: 0.27665
+          b: -0.19642
+
+        # Thrust Constraints
+        thrust_min: 0.0 # N
+        thrust_max: 15.7 # N
+        total_thrust_max: 62.8 # N
+
+      acados_parameters:
+        # This is the Weight Matrix that penalize state error in FC
+        # {W_position_xy, W_position_z, W_rotation_xy, W_rotation_z, W_speed, W_angular_speed}
+        # Q: [0.5, 1.0, 0.2, 0.5, 0.2, 0.5] # Used in simulation on gazebo #stable
+        # Q: [10.0, 20.0, 0.2, 0.5, 0.5, 0.5] # Used in simulation on gazebo
+        Q: [0.5, 1.0, 0.2, 3.0, 0.2, 0.5] # Used in simulation on gazebo by JAN-HREBEC
+
+          # This is the weight Matrix that penalize input control effort in FC
+        R: 0.0 # stable on gazebo
+        
+
+
+
+
