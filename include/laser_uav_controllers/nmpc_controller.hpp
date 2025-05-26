@@ -15,9 +15,9 @@
 #include <quadrotor_ode_model/quadrotor_ode_model.h>
 #include <acados_solver_quadrotor_ode.h>
 
-#include <geometry_msgs/msg/pose.hpp>
 #include <nav_msgs/msg/odometry.hpp>
 
+#include <laser_msgs/msg/reference_state.hpp>
 #include <laser_msgs/msg/attitude_rates_and_thrust.hpp>
 
 namespace laser_uav_controllers
@@ -68,12 +68,14 @@ public:
   NmpcController();
   NmpcController(quadrotor_t quadrotor_params, acados_t acados_params);
 
-  laser_msgs::msg::AttitudeRatesAndThrust getCorrection(geometry_msgs::msg::Pose reference, const nav_msgs::msg::Odometry msg);
+  laser_msgs::msg::AttitudeRatesAndThrust getCorrection(laser_msgs::msg::ReferenceState reference, const nav_msgs::msg::Odometry msg);
+  laser_msgs::msg::AttitudeRatesAndThrust getCorrection(std::vector<laser_msgs::msg::ReferenceState> trajectory, const nav_msgs::msg::Odometry msg);
 
 private:
   void   setInitState();
   void   setInitSolution();
   void   setReference();
+  void   setTrajectory(std::vector<laser_msgs::msg::ReferenceState> trajectory);
   bool   ocpSolver();
   void   printStatistics();
   void   getFirstControlInput();
@@ -138,7 +140,7 @@ private:
   //}
 
   double x0_[NX];
-  double yref_[NYN];
+  double yref_[NX];
 
   double u0_[NU];
   double x1_[NX];

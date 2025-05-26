@@ -160,14 +160,14 @@ void NmpcController::setReference() {
   parameters_[params_e::qz_reference] = yref_[states_e::qz];
 
   // --- Set Speed Reference
-  yref_for_acados[6] = 0.00;
-  yref_for_acados[7] = 0.00;
-  yref_for_acados[8] = 0.00;
+  yref_for_acados[6] = yref_[states_e::vbx];
+  yref_for_acados[7] = yref_[states_e::vby];
+  yref_for_acados[8] = yref_[states_e::vbz];
 
   // --- Set Angular Speed Reference
-  yref_for_acados[9]  = 0.00;
-  yref_for_acados[10] = 0.00;
-  yref_for_acados[11] = 0.00;
+  yref_for_acados[9]  = yref_[states_e::wx];
+  yref_for_acados[10] = yref_[states_e::wy];
+  yref_for_acados[11] = yref_[states_e::wz];
 
   // --- Set Initial Thrust Reference
   yref_for_acados[12] = hover_thrust_;
@@ -177,6 +177,50 @@ void NmpcController::setReference() {
 
   // --- Set Reference in Acados
   for (int i = 0; i <= N; i++) {
+    ocp_nlp_cost_model_set(acados_ocp_capsule->nlp_config, acados_ocp_capsule->nlp_dims, acados_ocp_capsule->nlp_in, i, "yref", yref_for_acados);
+    quadrotor_ode_acados_update_params(acados_ocp_capsule, i, parameters_, NP);
+  }
+}
+//}
+
+/* setTrajectory() //{ */
+void NmpcController::setTrajectory(std::vector<laser_msgs::msg::ReferenceState> trajectory) {
+  double yref_for_acados[NY] = {0};
+
+  for (auto i = 0; i <= N; i++) {
+    // --- Set Position Reference
+    yref_for_acados[0] = trajectory[i].use_position ? trajectory[i].pose.position.x : 0.00;
+    yref_for_acados[1] = trajectory[i].use_position ? trajectory[i].pose.position.y : 0.00;
+    yref_for_acados[2] = trajectory[i].use_position ? trajectory[i].pose.position.z : 0.00;
+
+    // --- Set Quaternion Reference
+    parameters_[params_e::qw_reference] = trajectory[i].use_orientation ? trajectory[i].pose.orientation.w : 1.00;
+    parameters_[params_e::qx_reference] = trajectory[i].use_orientation ? trajectory[i].pose.orientation.x : 0.00;
+    parameters_[params_e::qy_reference] = trajectory[i].use_orientation ? trajectory[i].pose.orientation.y : 0.00;
+    parameters_[params_e::qz_reference] = trajectory[i].use_orientation ? trajectory[i].pose.orientation.z : 0.00;
+
+    // --- Set Attitude Error
+    yref_for_acados[3] = 0.00;
+    yref_for_acados[4] = 0.00;
+    yref_for_acados[5] = 0.00;
+
+    // --- Set Speed Reference
+    yref_for_acados[6] = trajectory[i].use_linear_velocity ? trajectory[i].twist.linear.x : 0.00;
+    yref_for_acados[7] = trajectory[i].use_linear_velocity ? trajectory[i].twist.linear.y : 0.00;
+    yref_for_acados[8] = trajectory[i].use_linear_velocity ? trajectory[i].twist.linear.z : 0.00;
+
+    // --- Set Angular Speed Reference
+    yref_for_acados[9]  = trajectory[i].use_angular_velocity ? trajectory[i].twist.angular.x : 0.00;
+    yref_for_acados[10] = trajectory[i].use_angular_velocity ? trajectory[i].twist.angular.y : 0.00;
+    yref_for_acados[11] = trajectory[i].use_angular_velocity ? trajectory[i].twist.angular.z : 0.00;
+
+    // --- Set Initial Thrust Reference
+    yref_for_acados[12] = hover_thrust_;
+    yref_for_acados[13] = hover_thrust_;
+    yref_for_acados[14] = hover_thrust_;
+    yref_for_acados[15] = hover_thrust_;
+
+    // --- Set Reference in Acados
     ocp_nlp_cost_model_set(acados_ocp_capsule->nlp_config, acados_ocp_capsule->nlp_dims, acados_ocp_capsule->nlp_in, i, "yref", yref_for_acados);
     quadrotor_ode_acados_update_params(acados_ocp_capsule, i, parameters_, NP);
   }
@@ -275,21 +319,21 @@ double NmpcController::thrustToThrotle() {
 //}
 
 ///* getCorrection() //{ */
-laser_msgs::msg::AttitudeRatesAndThrust NmpcController::getCorrection(geometry_msgs::msg::Pose reference, const nav_msgs::msg::Odometry msg) {
+laser_msgs::msg::AttitudeRatesAndThrust NmpcController::getCorrection(laser_msgs::msg::ReferenceState reference, const nav_msgs::msg::Odometry msg) {
   // --- Update reference
-  yref_[states_e::x]   = reference.position.x;
-  yref_[states_e::y]   = reference.position.y;
-  yref_[states_e::z]   = reference.position.z;
-  yref_[states_e::qw]  = reference.orientation.w;
-  yref_[states_e::qx]  = reference.orientation.x;
-  yref_[states_e::qy]  = reference.orientation.y;
-  yref_[states_e::qz]  = reference.orientation.z;
-  yref_[states_e::vbx] = 0.00;
-  yref_[states_e::vby] = 0.00;
-  yref_[states_e::vbz] = 0.00;
-  yref_[states_e::wx]  = 0.00;
-  yref_[states_e::wy]  = 0.00;
-  yref_[states_e::wz]  = 0.00;
+  yref_[states_e::x]   = reference.use_position ? reference.pose.position.x : 0.00;
+  yref_[states_e::y]   = reference.use_position ? reference.pose.position.y : 0.00;
+  yref_[states_e::z]   = reference.use_position ? reference.pose.position.z : 0.00;
+  yref_[states_e::qw]  = reference.use_orientation ? reference.pose.orientation.w : 1.00;
+  yref_[states_e::qx]  = reference.use_orientation ? reference.pose.orientation.x : 0.00;
+  yref_[states_e::qy]  = reference.use_orientation ? reference.pose.orientation.y : 0.00;
+  yref_[states_e::qz]  = reference.use_orientation ? reference.pose.orientation.z : 0.00;
+  yref_[states_e::vbx] = reference.use_linear_velocity ? reference.twist.linear.x : 0.00;
+  yref_[states_e::vby] = reference.use_linear_velocity ? reference.twist.linear.y : 0.00;
+  yref_[states_e::vbz] = reference.use_linear_velocity ? reference.twist.linear.z : 0.00;
+  yref_[states_e::wx]  = reference.use_angular_velocity ? reference.twist.angular.x : 0.00;
+  yref_[states_e::wy]  = reference.use_angular_velocity ? reference.twist.angular.y : 0.00;
+  yref_[states_e::wz]  = reference.use_angular_velocity ? reference.twist.angular.z : 0.00;
 
   // --- Init Thrust is hover thrust assumption
   u0_[control_input_e::w1] = hover_thrust_;
@@ -316,6 +360,59 @@ laser_msgs::msg::AttitudeRatesAndThrust NmpcController::getCorrection(geometry_m
   setInitState();
   setInitSolution();
   setReference();
+
+  // --- Solver OCP
+  if (ocpSolver()) {
+    printStatistics();
+
+    // --- Take the optimum control input and computed state
+    getFirstControlInput();
+    getFirstComputedStates();
+  }
+
+  // --- Fill the input control message to pixhawk
+  laser_msgs::msg::AttitudeRatesAndThrust control_input;
+  control_input.roll_rate               = x1_[states_e::wx];
+  control_input.pitch_rate              = x1_[states_e::wy];
+  control_input.yaw_rate                = x1_[states_e::wz];
+  control_input.total_thrust_normalized = thrustToThrotle();
+
+  std::cout << "Control Input" << std::endl;
+  std::cout << "w1: " << u0_[control_input_e::w1] << ", w2: " << u0_[control_input_e::w2] << ", w3: " << u0_[control_input_e::w3]
+            << ", w4: " << u0_[control_input_e::w4] << std::endl;
+
+  return control_input;
+}
+//}
+
+///* getCorrection() //{ */
+laser_msgs::msg::AttitudeRatesAndThrust NmpcController::getCorrection(std::vector<laser_msgs::msg::ReferenceState> trajectory,
+                                                                      const nav_msgs::msg::Odometry                msg) {
+  // --- Init Thrust is hover thrust assumption
+  u0_[control_input_e::w1] = hover_thrust_;
+  u0_[control_input_e::w2] = hover_thrust_;
+  u0_[control_input_e::w3] = hover_thrust_;
+  u0_[control_input_e::w4] = hover_thrust_;
+
+  // --- Read Estimate
+  x0_[states_e::x]   = msg.pose.pose.position.x;
+  x0_[states_e::y]   = msg.pose.pose.position.y;
+  x0_[states_e::z]   = msg.pose.pose.position.z;
+  x0_[states_e::qw]  = msg.pose.pose.orientation.w;
+  x0_[states_e::qx]  = msg.pose.pose.orientation.x;
+  x0_[states_e::qy]  = msg.pose.pose.orientation.y;
+  x0_[states_e::qz]  = msg.pose.pose.orientation.z;
+  x0_[states_e::vbx] = msg.twist.twist.linear.x;
+  x0_[states_e::vby] = msg.twist.twist.linear.y;
+  x0_[states_e::vbz] = msg.twist.twist.linear.z;
+  x0_[states_e::wx]  = msg.twist.twist.angular.x;
+  x0_[states_e::wy]  = msg.twist.twist.angular.y;
+  x0_[states_e::wz]  = msg.twist.twist.angular.z;
+
+  // --- Initialize solution
+  setInitState();
+  setInitSolution();
+  setTrajectory(trajectory);
 
   // --- Solver OCP
   if (ocpSolver()) {
