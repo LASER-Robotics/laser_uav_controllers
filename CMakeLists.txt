@@ -72,8 +72,12 @@ install(FILES ${full_model_build}/libacados_ocp_solver_quadrotor_ode.so
 
 install(DIRECTORY include/
   scripts
-  params
   DESTINATION include/
+)
+
+install(DIRECTORY
+  params
+  DESTINATION share/${PROJECT_NAME}
 )
 
 if(BUILD_TESTING)
