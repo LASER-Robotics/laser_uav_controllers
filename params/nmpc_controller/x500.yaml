@@ -3,7 +3,7 @@
     nmpc_controller:
       quadrotor_parameters:
         # Quadrotor Mass
-        mass: 2.76 # Kg
+        mass: 2.00 # Kg
 
           # Diagonal of Inertia Matrix
         inertia: [0.4953, 0.4953, 0.3413]
