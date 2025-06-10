@@ -100,7 +100,6 @@ def export_quadrotor_ode_model() -> AcadosModel:
 
     # Derivate States
     dot_p = v # v
-    # dot_p = rotate_quaternion(q_normalized, v) # v
     dot_q = 0.5 * quaternion_multiplication(q_normalized, vertcat(0, w)) # 1/2 * q @ [0, wx, wy, wz]
     dot_v = rotate_quaternion(q_normalized, vertcat(0, 0, total_thrust)) + g - a_drag # q @ [0, 0, T] + [0, 0, -g] - v_cd
     dot_w = mtimes(I_inv, vertcat((+ T[0]*motor_pos_0[1] + T[1]*motor_pos_1[1] + T[2]*motor_pos_2[1] + T[3]*motor_pos_3[1]),

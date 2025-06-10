@@ -1,6 +1,7 @@
 #ifndef LASER_UAV_CONTROLLERS__NMPC_CONTROLLER_HPP
 #define LASER_UAV_CONTROLLERS__NMPC_CONTROLLER_HPP
 
+#include <Eigen/Dense>
 #include <iostream>
 
 #include "acados/utils/math.h"

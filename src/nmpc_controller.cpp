@@ -342,19 +342,24 @@ laser_msgs::msg::AttitudeRatesAndThrust NmpcController::getCorrection(laser_msgs
   u0_[control_input_e::w4] = hover_thrust_;
 
   // --- Read Estimate
-  x0_[states_e::x]   = msg.pose.pose.position.x;
-  x0_[states_e::y]   = msg.pose.pose.position.y;
-  x0_[states_e::z]   = msg.pose.pose.position.z;
-  x0_[states_e::qw]  = msg.pose.pose.orientation.w;
-  x0_[states_e::qx]  = msg.pose.pose.orientation.x;
-  x0_[states_e::qy]  = msg.pose.pose.orientation.y;
-  x0_[states_e::qz]  = msg.pose.pose.orientation.z;
-  x0_[states_e::vbx] = msg.twist.twist.linear.x;
-  x0_[states_e::vby] = msg.twist.twist.linear.y;
-  x0_[states_e::vbz] = msg.twist.twist.linear.z;
-  x0_[states_e::wx]  = msg.twist.twist.angular.x;
-  x0_[states_e::wy]  = msg.twist.twist.angular.y;
-  x0_[states_e::wz]  = msg.twist.twist.angular.z;
+  x0_[states_e::x]  = msg.pose.pose.position.x;
+  x0_[states_e::y]  = msg.pose.pose.position.y;
+  x0_[states_e::z]  = msg.pose.pose.position.z;
+  x0_[states_e::qw] = msg.pose.pose.orientation.w;
+  x0_[states_e::qx] = msg.pose.pose.orientation.x;
+  x0_[states_e::qy] = msg.pose.pose.orientation.y;
+  x0_[states_e::qz] = msg.pose.pose.orientation.z;
+
+  Eigen::Vector3d    twist_world_frame(msg.twist.twist.linear.x, msg.twist.twist.linear.y, msg.twist.twist.linear.z);
+  Eigen::Quaterniond q(msg.pose.pose.orientation.w, msg.pose.pose.orientation.x, msg.pose.pose.orientation.y, msg.pose.pose.orientation.z);
+  twist_world_frame  = q.normalized().toRotationMatrix() * twist_world_frame;
+  x0_[states_e::vbx] = twist_world_frame(0);
+  x0_[states_e::vby] = twist_world_frame(1);
+  x0_[states_e::vbz] = twist_world_frame(2);
+
+  x0_[states_e::wx] = msg.twist.twist.angular.x;
+  x0_[states_e::wy] = msg.twist.twist.angular.y;
+  x0_[states_e::wz] = msg.twist.twist.angular.z;
 
   // --- Initialize solution
   setInitState();
@@ -395,19 +400,24 @@ laser_msgs::msg::AttitudeRatesAndThrust NmpcController::getCorrection(std::vecto
   u0_[control_input_e::w4] = hover_thrust_;
 
   // --- Read Estimate
-  x0_[states_e::x]   = msg.pose.pose.position.x;
-  x0_[states_e::y]   = msg.pose.pose.position.y;
-  x0_[states_e::z]   = msg.pose.pose.position.z;
-  x0_[states_e::qw]  = msg.pose.pose.orientation.w;
-  x0_[states_e::qx]  = msg.pose.pose.orientation.x;
-  x0_[states_e::qy]  = msg.pose.pose.orientation.y;
-  x0_[states_e::qz]  = msg.pose.pose.orientation.z;
-  x0_[states_e::vbx] = msg.twist.twist.linear.x;
-  x0_[states_e::vby] = msg.twist.twist.linear.y;
-  x0_[states_e::vbz] = msg.twist.twist.linear.z;
-  x0_[states_e::wx]  = msg.twist.twist.angular.x;
-  x0_[states_e::wy]  = msg.twist.twist.angular.y;
-  x0_[states_e::wz]  = msg.twist.twist.angular.z;
+  x0_[states_e::x]  = msg.pose.pose.position.x;
+  x0_[states_e::y]  = msg.pose.pose.position.y;
+  x0_[states_e::z]  = msg.pose.pose.position.z;
+  x0_[states_e::qw] = msg.pose.pose.orientation.w;
+  x0_[states_e::qx] = msg.pose.pose.orientation.x;
+  x0_[states_e::qy] = msg.pose.pose.orientation.y;
+  x0_[states_e::qz] = msg.pose.pose.orientation.z;
+
+  Eigen::Vector3d    twist_world_frame(msg.twist.twist.linear.x, msg.twist.twist.linear.y, msg.twist.twist.linear.z);
+  Eigen::Quaterniond q(msg.pose.pose.orientation.w, msg.pose.pose.orientation.x, msg.pose.pose.orientation.y, msg.pose.pose.orientation.z);
+  twist_world_frame  = q.normalized().toRotationMatrix() * twist_world_frame;
+  x0_[states_e::vbx] = twist_world_frame(0);
+  x0_[states_e::vby] = twist_world_frame(1);
+  x0_[states_e::vbz] = twist_world_frame(2);
+
+  x0_[states_e::wx] = msg.twist.twist.angular.x;
+  x0_[states_e::wy] = msg.twist.twist.angular.y;
+  x0_[states_e::wz] = msg.twist.twist.angular.z;
 
   // --- Initialize solution
   setInitState();
