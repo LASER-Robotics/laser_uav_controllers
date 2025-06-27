@@ -13,7 +13,7 @@ NmpcController::NmpcController(quadrotor_t quadrotor_params, acados_t acados_par
   acados_ocp_capsule = quadrotor_ode_acados_create_capsule();
 
   double *dt = new double[N];
-  std::fill_n(dt, N, 2.0 / N);
+  std::fill_n(dt, N, 3.0 / N);
   int status = quadrotor_ode_acados_create_with_discretization(acados_ocp_capsule, N, dt);
 
   if (status) {
