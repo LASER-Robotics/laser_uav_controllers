@@ -24,7 +24,6 @@
 namespace laser_uav_controllers
 {
 
-#define N QUADROTOR_ODE_N
 #define NX QUADROTOR_ODE_NX
 #define NU QUADROTOR_ODE_NU
 #define NY QUADROTOR_ODE_NY
@@ -59,6 +58,8 @@ struct quadrotor_t
 /* acados_t //{ */
 struct acados_t
 {
+  int                 N;
+  double              dt;
   std::vector<double> Q;
   double              R;
 };
@@ -139,6 +140,8 @@ private:
     qz_reference       = 19
   };
   //}
+
+  int N;
 
   double x0_[NX];
   double yref_[NX];

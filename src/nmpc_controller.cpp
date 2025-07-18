@@ -11,9 +11,10 @@ NmpcController::NmpcController() {
 NmpcController::NmpcController(quadrotor_t quadrotor_params, acados_t acados_params) {
   std::cout << "creating acados ocp solver" << std::endl;
   acados_ocp_capsule = quadrotor_ode_acados_create_capsule();
+  N                  = acados_params.N;
 
   double *dt = new double[N];
-  std::fill_n(dt, N, 3.0 / N);
+  std::fill_n(dt, N, (N * acados_params.dt) / N);
   int status = quadrotor_ode_acados_create_with_discretization(acados_ocp_capsule, N, dt);
 
   if (status) {

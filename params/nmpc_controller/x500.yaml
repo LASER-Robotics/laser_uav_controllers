@@ -28,6 +28,9 @@
         total_thrust_max: 62.8 # N
 
       acados_parameters:
+        N: 30 # Horizon length
+        dt: 0.1 # Discrete step in horizon
+
         # This is the Weight Matrix that penalize state error in FC
         # {W_position_xy, W_position_z, W_rotation_xy, W_rotation_z, W_speed, W_angular_speed}
         Q: [10.0, 8.0, 0.2, 3.0, 0.3, 0.3] # Real drone gains 
