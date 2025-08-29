@@ -7,7 +7,7 @@ This package provides **C++ classes** that implement feedback controllers for th
 The main objective of this package is to provide controllers capable of tracking desired **reference**.
 
 ### NMPCController
--   **Description:** A Nonlinear Model Predictive Controller (MPC) that uses a dynamic model of the UAV to predict its future states. It optimizes control inputs over a finite time horizon to follow a reference trajectory while respecting system constraints.
+-   **Description:** A Nonlinear Model Predictive Controller (NMPC) that uses a dynamic model of the UAV to predict its future states. It optimizes control inputs over a finite time horizon to follow a reference trajectory while respecting system constraints.
 -   **Reference:**
     ```bibtex
     @article{sun2022comparative,
