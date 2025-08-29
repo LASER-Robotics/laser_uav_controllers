@@ -6,7 +6,7 @@
         mass: 1.60 # Kg
 
           # Diagonal of Inertia Matrix
-        inertia: [0.4953, 0.4953, 0.3413]
+        inertia: [0.021667, 0.021667, 0.0425]
 
           # Torque constant {Ctau}
         c_tau: 0.59 # This constant is the torque prop coefficient divided by thrust coefficient cq / ct
