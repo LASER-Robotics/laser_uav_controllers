@@ -311,6 +311,18 @@ void NmpcController::printAllControlInputs() {
 }
 //}
 
+///* getLastIndividualThrust() //{ */
+std::vector<double> NmpcController::getLastIndividualThrust() {
+  std::vector<double> aux;
+  aux.push_back(u0_[control_input_e::w1]);
+  aux.push_back(u0_[control_input_e::w2]);
+  aux.push_back(u0_[control_input_e::w3]);
+  aux.push_back(u0_[control_input_e::w4]);
+
+  return aux;
+}
+//}
+
 /* thrustToThrotle() //{ */
 double NmpcController::thrustToThrotle() {
   // --- The normalization is maded by quadratic curve that represent thrust force x throtle normalized

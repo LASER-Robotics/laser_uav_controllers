@@ -19,6 +19,7 @@
 #include <nav_msgs/msg/odometry.hpp>
 
 #include <laser_msgs/msg/reference_state.hpp>
+#include <laser_msgs/msg/uav_control_diagnostics.hpp>
 #include <laser_msgs/msg/attitude_rates_and_thrust.hpp>
 
 namespace laser_uav_controllers
@@ -72,6 +73,8 @@ public:
 
   laser_msgs::msg::AttitudeRatesAndThrust getCorrection(laser_msgs::msg::ReferenceState reference, const nav_msgs::msg::Odometry msg);
   laser_msgs::msg::AttitudeRatesAndThrust getCorrection(std::vector<laser_msgs::msg::ReferenceState> trajectory, const nav_msgs::msg::Odometry msg);
+
+  std::vector<double> getLastIndividualThrust();
 
 private:
   void   setInitState();
