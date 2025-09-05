@@ -21,7 +21,7 @@ find_package(nav_msgs REQUIRED)
 
 set(acados_include "$ENV{ACADOS_SOURCE_DIR}/include")
 set(acados_lib "$ENV{ACADOS_SOURCE_DIR}/lib")
-set(full_model_build ${CMAKE_SOURCE_DIR}/scripts/quadrotor_ode/)
+set(full_model_build ${CMAKE_CURRENT_SOURCE_DIR}/scripts/quadrotor_ode/)
 
 set(dependencies
 Eigen3

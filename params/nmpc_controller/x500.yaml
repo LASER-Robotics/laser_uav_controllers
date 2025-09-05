@@ -15,7 +15,7 @@
         drag: [0.0, 0.0, 0.0] # For now we dont use this
 
           # Motors positions to the CoM
-        motors_positions: [-0.185, -0.18, 0.185, -0.18, -0.185, 0.18, 0.185, 0.18] # {motor_0_x, motor_0_y, motor_1_x, motor_1_y, ......}
+        motors_positions: [0.185, -0.18, -0.185, 0.18, 0.185, 0.18, -0.185, -0.18] # {motor_0_x, motor_0_y, motor_1_x, motor_1_y, ......}
 
         # This is used to model the thrust x throtle curve for normalize input to the px4
         quadratic_motor_model:

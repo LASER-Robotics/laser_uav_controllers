@@ -104,7 +104,7 @@ def export_quadrotor_ode_model() -> AcadosModel:
     dot_v = rotate_quaternion(q_normalized, vertcat(0, 0, total_thrust)) + g - a_drag # q @ [0, 0, T] + [0, 0, -g] - v_cd
     dot_w = mtimes(I_inv, vertcat((+ T[0]*motor_pos_0[1] + T[1]*motor_pos_1[1] + T[2]*motor_pos_2[1] + T[3]*motor_pos_3[1]),
                                   (- T[0]*motor_pos_0[0] - T[1]*motor_pos_1[0] - T[2]*motor_pos_2[0] - T[3]*motor_pos_3[0]),
-                                  C_tau*(-T[0]+T[1]+T[2]-T[3])) - cross( w, mtimes(I, w))) # I_inv * (AT - w X Iw)
+                                  C_tau*(-T[0]-T[1]+T[2]+T[3])) - cross( w, mtimes(I, w))) # I_inv * (AT - w X Iw)
 
     f_expl = vertcat(dot_p, dot_q, dot_v, dot_w)
 
