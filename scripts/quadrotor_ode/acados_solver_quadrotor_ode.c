@@ -394,19 +394,26 @@ void quadrotor_ode_acados_create_set_default_parameters(quadrotor_ode_solver_cap
     // initialize parameters to nominal value
     double* p = calloc(NP, sizeof(double));
     p[0] = 0.85;
-    p[1] = 0.15;
-    p[2] = -0.15;
-    p[3] = -0.15;
-    p[4] = 0.15;
-    p[5] = -0.15;
-    p[6] = -0.15;
-    p[7] = 0.15;
-    p[8] = 0.15;
-    p[9] = 0.001;
-    p[10] = 0.001;
-    p[11] = 0.0014;
-    p[12] = 0.05;
-    p[16] = 1;
+    p[1] = 1;
+    p[2] = 1;
+    p[3] = 1;
+    p[4] = 1;
+    p[9] = -0.185;
+    p[10] = 0.185;
+    p[11] = 0.185;
+    p[12] = -0.185;
+    p[17] = 0.18;
+    p[18] = -0.18;
+    p[19] = -0.18;
+    p[20] = 0.18;
+    p[25] = -0.59;
+    p[26] = -0.59;
+    p[27] = 0.59;
+    p[28] = 0.59;
+    p[33] = 0.001;
+    p[34] = 0.001;
+    p[35] = 0.0014;
+    p[39] = 1;
 
     for (int i = 0; i <= N; i++) {
         quadrotor_ode_acados_update_params(capsule, i, p, NP);
@@ -511,6 +518,10 @@ void quadrotor_ode_acados_setup_nlp_in(quadrotor_ode_solver_capsule* capsule, co
     yref_0[13] = 2.0839025;
     yref_0[14] = 2.0839025;
     yref_0[15] = 2.0839025;
+    yref_0[16] = 1;
+    yref_0[17] = 1;
+    yref_0[18] = 1;
+    yref_0[19] = 1;
     ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, 0, "yref", yref_0);
     free(yref_0);
 
@@ -528,10 +539,6 @@ void quadrotor_ode_acados_setup_nlp_in(quadrotor_ode_solver_capsule* capsule, co
     W_0[9+(NY0) * 9] = 0.5;
     W_0[10+(NY0) * 10] = 0.5;
     W_0[11+(NY0) * 11] = 0.5;
-    W_0[12+(NY0) * 12] = 3;
-    W_0[13+(NY0) * 13] = 3;
-    W_0[14+(NY0) * 14] = 3;
-    W_0[15+(NY0) * 15] = 3;
     ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, 0, "W", W_0);
     free(W_0);
     double* yref = calloc(NY, sizeof(double));
@@ -541,6 +548,10 @@ void quadrotor_ode_acados_setup_nlp_in(quadrotor_ode_solver_capsule* capsule, co
     yref[13] = 2.0839025;
     yref[14] = 2.0839025;
     yref[15] = 2.0839025;
+    yref[16] = 1;
+    yref[17] = 1;
+    yref[18] = 1;
+    yref[19] = 1;
 
     for (int i = 1; i < N; i++)
     {
@@ -561,10 +572,6 @@ void quadrotor_ode_acados_setup_nlp_in(quadrotor_ode_solver_capsule* capsule, co
     W[9+(NY) * 9] = 0.5;
     W[10+(NY) * 10] = 0.5;
     W[11+(NY) * 11] = 0.5;
-    W[12+(NY) * 12] = 3;
-    W[13+(NY) * 13] = 3;
-    W[14+(NY) * 14] = 3;
-    W[15+(NY) * 15] = 3;
 
     for (int i = 1; i < N; i++)
     {
@@ -672,6 +679,10 @@ void quadrotor_ode_acados_setup_nlp_in(quadrotor_ode_solver_capsule* capsule, co
     idxbu[1] = 1;
     idxbu[2] = 2;
     idxbu[3] = 3;
+    idxbu[4] = 4;
+    idxbu[5] = 5;
+    idxbu[6] = 6;
+    idxbu[7] = 7;
     double* lubu = calloc(2*NBU, sizeof(double));
     double* lbu = lubu;
     double* ubu = lubu + NBU;
@@ -679,6 +690,10 @@ void quadrotor_ode_acados_setup_nlp_in(quadrotor_ode_solver_capsule* capsule, co
     ubu[1] = 15.7;
     ubu[2] = 15.7;
     ubu[3] = 15.7;
+    ubu[4] = 15.7;
+    ubu[5] = 15.7;
+    ubu[6] = 15.7;
+    ubu[7] = 15.7;
 
     for (int i = 0; i < N; i++)
     {
@@ -708,8 +723,8 @@ void quadrotor_ode_acados_setup_nlp_in(quadrotor_ode_solver_capsule* capsule, co
     ubx[0] = 10;
     lbx[1] = -10;
     ubx[1] = 10;
-    lbx[2] = -4;
-    ubx[2] = 4;
+    lbx[2] = -5;
+    ubx[2] = 5;
 
     for (int i = 1; i < N; i++)
     {
@@ -731,6 +746,10 @@ void quadrotor_ode_acados_setup_nlp_in(quadrotor_ode_solver_capsule* capsule, co
     D[0+NG * 1] = 1;
     D[0+NG * 2] = 1;
     D[0+NG * 3] = 1;
+    D[0+NG * 4] = 1;
+    D[0+NG * 5] = 1;
+    D[0+NG * 6] = 1;
+    D[0+NG * 7] = 1;
     ug[0] = 62.8;
 
     for (int i = 0; i < N; i++)
@@ -1052,7 +1071,7 @@ int quadrotor_ode_acados_update_params(quadrotor_ode_solver_capsule* capsule, in
 {
     int solver_status = 0;
 
-    int casadi_np = 20;
+    int casadi_np = 43;
     if (casadi_np != np) {
         printf("acados_update_params: trying to set %i parameters for external functions."
             " External function has %i parameters. Exiting.\n", np, casadi_np);

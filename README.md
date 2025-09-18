@@ -1,3 +1,5 @@
+README DEPRECATED
+
 # LASER UAV Controllers
 
 This package provides **C++ classes** that implement feedback controllers for the Laser UAV System (LUS), translating desired trajectories into low-level commands.

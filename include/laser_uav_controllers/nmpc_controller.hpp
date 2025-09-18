@@ -1,8 +1,7 @@
 #ifndef LASER_UAV_CONTROLLERS__NMPC_CONTROLLER_HPP
 #define LASER_UAV_CONTROLLERS__NMPC_CONTROLLER_HPP
 
-#include <Eigen/Dense>
-#include <iostream>
+#include <laser_uav_controllers/common.hpp>
 
 #include "acados/utils/math.h"
 #include <acados_c/ocp_nlp_interface.h>
@@ -19,46 +18,20 @@
 #include <nav_msgs/msg/odometry.hpp>
 
 #include <laser_msgs/msg/reference_state.hpp>
-#include <laser_msgs/msg/uav_control_diagnostics.hpp>
 #include <laser_msgs/msg/attitude_rates_and_thrust.hpp>
 
 namespace laser_uav_controllers
 {
-
 #define NX QUADROTOR_ODE_NX
 #define NU QUADROTOR_ODE_NU
 #define NY QUADROTOR_ODE_NY
 #define NYN QUADROTOR_ODE_NYN
 #define NP QUADROTOR_ODE_NP
 
-#define GRAVITY 9.80665
-
-/* quadrotor_t //{ */
-struct quadrotor_t
-{
-  double mass;
-  double motor_position_0[2];
-  double motor_position_1[2];
-  double motor_position_2[2];
-  double motor_position_3[2];
-  double inertia_x;
-  double inertia_y;
-  double inertia_z;
-  double c_tau;
-  double drag_x;
-  double drag_y;
-  double drag_z;
-  double thrust_min;
-  double thrust_max;
-  double total_thrust_max;
-  double motor_curve_a;
-  double motor_curve_b;
-};
-//}
-
 /* acados_t //{ */
 struct acados_t
 {
+  std::string         nmpc_mode;
   int                 N;
   double              dt;
   std::vector<double> Q;
@@ -71,23 +44,21 @@ public:
   NmpcController();
   NmpcController(quadrotor_t quadrotor_params, acados_t acados_params);
 
-  laser_msgs::msg::AttitudeRatesAndThrust getCorrection(laser_msgs::msg::ReferenceState reference, const nav_msgs::msg::Odometry msg);
-  laser_msgs::msg::AttitudeRatesAndThrust getCorrection(std::vector<laser_msgs::msg::ReferenceState> trajectory, const nav_msgs::msg::Odometry msg);
+  Eigen::VectorXd getCorrection(laser_msgs::msg::ReferenceState reference, const nav_msgs::msg::Odometry msg);
+  Eigen::VectorXd getCorrection(std::vector<laser_msgs::msg::ReferenceState> trajectory, const nav_msgs::msg::Odometry msg);
 
   std::vector<double> getLastIndividualThrust();
 
 private:
-  void   setInitState();
-  void   setInitSolution();
-  void   setReference();
-  void   setTrajectory(std::vector<laser_msgs::msg::ReferenceState> trajectory);
-  bool   ocpSolver();
-  void   printStatistics();
-  void   getFirstControlInput();
-  void   getFirstComputedStates();
-  void   printAllComputedStates();
-  void   printAllControlInputs();
-  double thrustToThrotle();
+  void setInitState();
+  void setInitSolution();
+  void setTrajectory(std::vector<laser_msgs::msg::ReferenceState> trajectory);
+  bool ocpSolver();
+  void printStatistics();
+  void getFirstControlInput();
+  void getFirstComputedStates();
+  void printAllComputedStates();
+  void printAllControlInputs();
 
   /* states_e //{ */
   enum states_e
@@ -114,33 +85,25 @@ private:
     w1 = 0,
     w2 = 1,
     w3 = 2,
-    w4 = 3
+    w4 = 3,
+    w5 = 4,
+    w6 = 5,
+    w7 = 6,
+    w8 = 7
   };
   //}
 
   /* params_e //{ */
   enum params_e
   {
-    mass               = 0,
-    motor_position_0_x = 1,
-    motor_position_0_y = 2,
-    motor_position_1_x = 3,
-    motor_position_1_y = 4,
-    motor_position_2_x = 5,
-    motor_position_2_y = 6,
-    motor_position_3_x = 7,
-    motor_position_3_y = 8,
-    inertia_x          = 9,
-    inertia_y          = 10,
-    inertia_z          = 11,
-    c_tau              = 12,
-    drag_x             = 13,
-    drag_y             = 14,
-    drag_z             = 15,
-    qw_reference       = 16,
-    qx_reference       = 17,
-    qy_reference       = 18,
-    qz_reference       = 19
+    mass         = 0,
+    G1           = 1,
+    inertia      = 33,
+    drag         = 36,
+    qw_reference = 39,
+    qx_reference = 40,
+    qy_reference = 41,
+    qz_reference = 42
   };
   //}
 
@@ -152,13 +115,16 @@ private:
   double u0_[NU];
   double x1_[NX];
 
+  int    n_motors_;
   double hover_thrust_;
   double motor_curve_a_;
   double motor_curve_b_;
 
-  double parameters_[NP];
+  double parameters_[NP] = {0};
 
   quadrotor_ode_solver_capsule *acados_ocp_capsule;
+
+  bool angular_rates_and_thrust_mode_;
 };
 }  // namespace laser_uav_controllers
 

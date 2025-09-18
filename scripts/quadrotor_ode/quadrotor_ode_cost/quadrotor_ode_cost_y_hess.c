@@ -57,19 +57,19 @@ extern "C" {
 casadi_real casadi_sq(casadi_real x) { return x*x;}
 
 static const casadi_int casadi_s0[3] = {13, 1, 1};
-static const casadi_int casadi_s1[3] = {4, 1, 1};
+static const casadi_int casadi_s1[3] = {8, 1, 1};
 static const casadi_int casadi_s2[3] = {0, 1, 1};
-static const casadi_int casadi_s3[3] = {16, 1, 1};
+static const casadi_int casadi_s3[3] = {20, 1, 1};
 static const casadi_int casadi_s4[3] = {0, 0, 1};
-static const casadi_int casadi_s5[3] = {20, 1, 1};
-static const casadi_int casadi_s6[36] = 
-  {17, 17, 0, 0, 0, 0, 0, 0,
-  0, 0, 4, 8, 12, 16, 16, 16,
-  16, 16, 16, 16, 7, 8, 9, 10,
-  7, 8, 9, 10, 7, 8, 9, 10,
-  7, 8, 9, 10};
+static const casadi_int casadi_s5[3] = {43, 1, 1};
+static const casadi_int casadi_s6[40] = 
+  {21, 21, 0, 0, 0, 0, 0, 0,
+  0, 0, 0, 0, 0, 0, 4, 8,
+  12, 16, 16, 16, 16, 16, 16, 16,
+  11, 12, 13, 14, 11, 12, 13, 14,
+  11, 12, 13, 14, 11, 12, 13, 14};
 
-/* quadrotor_ode_cost_y_hess:(i0[13],i1[4],i2[0],i3[16],i4[],i5[20])->(o0[17x17,16nz]) */
+/* quadrotor_ode_cost_y_hess:(i0[13],i1[8],i2[0],i3[20],i4[],i5[43])->(o0[21x21,16nz]) */
 static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, int mem) {
   casadi_real a00, a01, a02, a03, a04, a05, a06, a07, a08, a09, a10, a11;
   casadi_real a12, a13, a14, a15, a16, a17, a18, a19, a20, a21, a22, a23;
@@ -77,7 +77,7 @@ static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw,
   casadi_real a36, a37, a38, a39, a40, a41, a42, a43, a44, a45, a46, a47;
   casadi_real a48, a49, a50, a51, a52, a53, a54, a55, a56, a57, a58, a59;
   casadi_real a60, a61, a62, a63, a64, a65, a66, a67, a68, a69, a70, a71;
-  a00=arg[5]? arg[5][19] : 0;
+  a00=arg[5]? arg[5][42] : 0;
   a01=arg[3]? arg[3][4] : 0;
   a02=arg[0]? arg[0][3] : 0;
   a03=casadi_sq(a02);
@@ -92,14 +92,14 @@ static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw,
   a03=(a03+a07);
   a03=sqrt(a03);
   a07=(a02/a03);
-  a08=arg[5]? arg[5][16] : 0;
+  a08=arg[5]? arg[5][39] : 0;
   a09=(a07*a08);
   a10=(a04/a03);
-  a11=arg[5]? arg[5][17] : 0;
+  a11=arg[5]? arg[5][40] : 0;
   a12=(a10*a11);
   a09=(a09+a12);
   a12=(a05/a03);
-  a13=arg[5]? arg[5][18] : 0;
+  a13=arg[5]? arg[5][41] : 0;
   a14=(a12*a13);
   a09=(a09+a14);
   a14=(a06/a03);

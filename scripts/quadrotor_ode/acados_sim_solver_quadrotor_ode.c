@@ -173,19 +173,26 @@ int quadrotor_ode_acados_sim_create(quadrotor_ode_sim_solver_capsule * capsule)
     double* p = calloc(np, sizeof(double));
     
     p[0] = 0.85;
-    p[1] = 0.15;
-    p[2] = -0.15;
-    p[3] = -0.15;
-    p[4] = 0.15;
-    p[5] = -0.15;
-    p[6] = -0.15;
-    p[7] = 0.15;
-    p[8] = 0.15;
-    p[9] = 0.001;
-    p[10] = 0.001;
-    p[11] = 0.0014;
-    p[12] = 0.05;
-    p[16] = 1;
+    p[1] = 1;
+    p[2] = 1;
+    p[3] = 1;
+    p[4] = 1;
+    p[9] = -0.185;
+    p[10] = 0.185;
+    p[11] = 0.185;
+    p[12] = -0.185;
+    p[17] = 0.18;
+    p[18] = -0.18;
+    p[19] = -0.18;
+    p[20] = 0.18;
+    p[25] = -0.59;
+    p[26] = -0.59;
+    p[27] = 0.59;
+    p[28] = 0.59;
+    p[33] = 0.001;
+    p[34] = 0.001;
+    p[35] = 0.0014;
+    p[39] = 1;
 
     quadrotor_ode_acados_sim_update_params(capsule, p, np);
     free(p);
@@ -202,16 +209,16 @@ int quadrotor_ode_acados_sim_create(quadrotor_ode_sim_solver_capsule * capsule)
 
 
     // u
-    double u0[4];
-    for (int ii = 0; ii < 4; ii++)
+    double u0[8];
+    for (int ii = 0; ii < 8; ii++)
         u0[ii] = 0.0;
 
     sim_in_set(quadrotor_ode_sim_config, quadrotor_ode_sim_dims,
                quadrotor_ode_sim_in, "u", u0);
 
     // S_forw
-    double S_forw[221];
-    for (int ii = 0; ii < 221; ii++)
+    double S_forw[273];
+    for (int ii = 0; ii < 273; ii++)
         S_forw[ii] = 0.0;
     for (int ii = 0; ii < 13; ii++)
         S_forw[ii + ii * 13 ] = 1.0;

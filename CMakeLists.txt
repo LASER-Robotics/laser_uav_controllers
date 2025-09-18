@@ -4,7 +4,6 @@ project(laser_uav_controllers)
 if(NOT CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 17)
   set(CMAKE_CXX_STANDARD_REQUIRED ON)
-  set(CMAKE_BUILD_TYPE Debug)
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
@@ -18,6 +17,7 @@ find_package(laser_msgs REQUIRED)
 find_package(std_srvs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
+find_package(Boost REQUIRED) 
 
 set(acados_include "$ENV{ACADOS_SOURCE_DIR}/include")
 set(acados_lib "$ENV{ACADOS_SOURCE_DIR}/lib")
@@ -32,6 +32,8 @@ laser_msgs
 geometry_msgs
 )
 
+link_directories(${full_model_build})
+
 include_directories(
   include
   ${full_model_build}
@@ -41,12 +43,13 @@ include_directories(
 	${acados_include}/acados/
 	${acados_include}/qpOASES_e/
   ${EIGEN3_INCLUDE_DIR}
+  ${Boost_INCLUDE_DIR}
 )
 
-link_directories(${full_model_build})
-
 add_library(laser_uav_controllers SHARED
+  src/common.cpp
   src/nmpc_controller.cpp
+  src/indi_controller.cpp
 )
 
 target_link_libraries(laser_uav_controllers

@@ -1,5 +1,5 @@
 from acados_template import AcadosModel
-from casadi import DM, MX, SX, vertcat, sin, cos, Function, inv, cross, mtimes, diag, sqrt, norm_2
+from casadi import DM, MX, SX, vertcat, sin, cos, Function, inv, cross, mtimes, diag, sqrt, norm_2, reshape
 import numpy as np
 
 def quaternion_multiplication(q1,q2):
@@ -54,11 +54,8 @@ def export_quadrotor_ode_model() -> AcadosModel:
 
     quaternion_ref = SX.sym("quaternion_ref", 4);
 
-    # motor's distance to mass center
-    motor_pos_0 = SX.sym('motor_pos_0',2)
-    motor_pos_1 = SX.sym('motor_pos_1',2)
-    motor_pos_2 = SX.sym('motor_pos_2',2)
-    motor_pos_3 = SX.sym('motor_pos_3',2)
+    # motor's G1 Matrix (Allocation Matrix)
+    G1 = SX.sym('G1', 8, 4)
 
     # x
     p = SX.sym('p', 3)              # position
@@ -68,7 +65,7 @@ def export_quadrotor_ode_model() -> AcadosModel:
     x = vertcat(p, q, v, w)         # system's states definition
 
     # u
-    T = SX.sym('thrust', 4)         # individual thrusts
+    T = SX.sym('thrust', 8)         # individual thrusts
     u = vertcat(T)                  # system's input definition
 
     # xdot
@@ -79,7 +76,7 @@ def export_quadrotor_ode_model() -> AcadosModel:
     xdot = vertcat(p_dot, q_dot, v_dot, w_dot) # system's states derivation
 
     # Parameters definition
-    par = vertcat(m, motor_pos_0, motor_pos_1, motor_pos_2, motor_pos_3, I_diag, C_tau, C_drag, quaternion_ref)
+    par = vertcat(m, reshape(G1, -1, 1), I_diag, C_drag, quaternion_ref)
 
     g_ = 9.806
     g = SX([0, 0, -g_])             # gravity acceleration
@@ -96,15 +93,15 @@ def export_quadrotor_ode_model() -> AcadosModel:
     # print(f_drag_body)
     # a_drag = rotate_quaternion(q_normalized, f_drag_body)
 
-    total_thrust = (T[0] + T[1] + T[2] + T[3])/m
+    wrench = mtimes(G1.T, T)
+    tau = vertcat(wrench[1:])
+    total_acceleration = wrench[0] / m
 
     # Derivate States
     dot_p = v # v
     dot_q = 0.5 * quaternion_multiplication(q_normalized, vertcat(0, w)) # 1/2 * q @ [0, wx, wy, wz]
-    dot_v = rotate_quaternion(q_normalized, vertcat(0, 0, total_thrust)) + g - a_drag # q @ [0, 0, T] + [0, 0, -g] - v_cd
-    dot_w = mtimes(I_inv, vertcat((+ T[0]*motor_pos_0[1] + T[1]*motor_pos_1[1] + T[2]*motor_pos_2[1] + T[3]*motor_pos_3[1]),
-                                  (- T[0]*motor_pos_0[0] - T[1]*motor_pos_1[0] - T[2]*motor_pos_2[0] - T[3]*motor_pos_3[0]),
-                                  C_tau*(-T[0]-T[1]+T[2]+T[3])) - cross( w, mtimes(I, w))) # I_inv * (AT - w X Iw)
+    dot_v = rotate_quaternion(q_normalized, vertcat(0, 0, total_acceleration)) + g - a_drag # q @ [0, 0, T] + [0, 0, -g] - v_cd
+    dot_w = mtimes(I_inv, tau - cross( w, mtimes(I, w))) # I_inv * (AT - w X Iw)
 
     f_expl = vertcat(dot_p, dot_q, dot_v, dot_w)
 
