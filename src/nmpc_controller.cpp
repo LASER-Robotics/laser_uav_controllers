@@ -352,12 +352,10 @@ Eigen::VectorXd NmpcController::getCorrection(laser_msgs::msg::ReferenceState re
   if (angular_rates_and_thrust_mode_) {
     control_input    = Eigen::VectorXd::Zero(4);
     control_input(0) = 0;
-    for (auto i = 0; i < 8; i++) {
-      if (i < n_motors_) {
-        control_input(0) += thrustToThrotle(motor_curve_a_, motor_curve_b_, u0_[i]);
-      }
+    for (auto i = 0; i < n_motors_; i++) {
+      control_input(0) += u0_[i];
     }
-    control_input(0) /= n_motors_;
+    control_input(0) += thrustToThrotle(motor_curve_a_, motor_curve_b_, control_input(0) / n_motors_);
 
     control_input(1) = x1_[states_e::wx];
     control_input(2) = x1_[states_e::wy];
@@ -411,7 +409,6 @@ Eigen::VectorXd NmpcController::getCorrection(std::vector<laser_msgs::msg::Refer
 
   // --- Solver OCP
   if (ocpSolver()) {
-    printStatistics();
     // --- Take the optimum control input and computed state
     getFirstControlInput();
     getFirstComputedStates();
@@ -423,11 +420,9 @@ Eigen::VectorXd NmpcController::getCorrection(std::vector<laser_msgs::msg::Refer
     control_input    = Eigen::VectorXd::Zero(4);
     control_input(0) = 0;
     for (auto i = 0; i < n_motors_; i++) {
-      control_input(0) += thrustToThrotle(motor_curve_a_, motor_curve_b_, u0_[i]);
-      std::cout << control_input(0) << ", ";
+      control_input(0) += u0_[i];
     }
-    std::cout << std::endl;
-    control_input(0) /= n_motors_;
+    control_input(0) += thrustToThrotle(motor_curve_a_, motor_curve_b_, control_input(0) / n_motors_);
 
     control_input(1) = x1_[states_e::wx];
     control_input(2) = x1_[states_e::wy];
@@ -437,7 +432,6 @@ Eigen::VectorXd NmpcController::getCorrection(std::vector<laser_msgs::msg::Refer
     for (auto i = 0; i < n_motors_; i++) {
       control_input(i) = u0_[i];
     }
-    std::cout << std::endl;
   }
 
   return control_input;
