@@ -1,7 +1,7 @@
 {
     "acados_include_path": "/home/augusto/laser_uav_system_ws/src/laser_uav_controllers/acados/include",
     "acados_lib_path": "/home/augusto/laser_uav_system_ws/src/laser_uav_controllers/acados/lib",
-    "code_export_directory": "/home/augusto/visionfly_ws/src/visionfly_controllers/scripts/quadrotor_ode",
+    "code_export_directory": "/home/augusto/git/laser_uav_system/.gitman/laser_uav_controllers/scripts/quadrotor_ode",
     "constraints": {
         "C": [
             [
@@ -105,9 +105,9 @@
             0.0
         ],
         "lbx": [
-            -10.0,
-            -10.0,
-            -5.0
+            -20.0,
+            -20.0,
+            -8.0
         ],
         "lbx_0": [
             0.0,
@@ -157,9 +157,9 @@
             15.7
         ],
         "ubx": [
-            10.0,
-            10.0,
-            5.0
+            20.0,
+            20.0,
+            8.0
         ],
         "ubx_0": [
             0.0,

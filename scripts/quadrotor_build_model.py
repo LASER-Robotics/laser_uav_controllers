@@ -31,7 +31,7 @@ G1 = [1,1,1,1,0,0,0,0,
 ocp.parameter_values = np.concatenate([[mass], G1, inertia, C_drag, q_ref_init])
 
 #Constraints
-omega_max = np.array([10.0, 10.0, 5.0])  # [rad/s]
+omega_max = np.array([20.0, 20.0, 8.0])  # [rad/s]
 thrust_min = 0.0       # [N]
 thrust_max = 15.7       # [N] per motor
 thrust_total_max = 62.8 # [N] total thrust
