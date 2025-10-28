@@ -1,44 +1,6 @@
-/**:
+/**/**:
   ros__parameters:
     nmpc_controller:
-      quadrotor_parameters:
-        # Quadrotor Mass
-        mass: 1.75 # Kg
-
-        # Diagonal of Inertia Matrix
-        inertia: [0.01355, 0.01111, 0.01847]
-
-        # Thrust constant {Ct}
-        c_thrust: 5.68e-6  # This constant is the thrust coefficient
-
-        # Drag in x, y and z
-        drag: [0.0, 0.0, 0.0] # For now we dont use this
-
-        # quantity of motors
-        n_motors: 4
-
-        # Effectiveness Matrix
-        G1: [  1.0,     1.0,    1.0,     1.0,
-            -0.125,   0.125,  0.125,  -0.125,
-             -0.11,    0.11,  -0.11,    0.11,
-            -0.016,  -0.016,  0.016,   0.016 ]
-
-        # Motor inertia gain matrix
-        G2: [   0.0,      0.0,     0.0,      0.0,
-                0.0,      0.0,     0.0,      0.0,
-                0.0,      0.0,     0.0,      0.0,
-            -1.5e-5,  -1.5e-5,  1.5e-5,   1.5e-5 ]
-
-        # This is used to model the thrust x throtle curve for normalize input to the px4
-        quadratic_motor_model:
-          a: 0.243975
-          b: -0.232754
-
-        # Thrust Constraints
-        thrust_min: 0.0 # N
-        thrust_max: 23.6 # N
-        total_thrust_max: 94.4 # N
-
       acados_parameters:
         nmpc_mode: "individual_thrust" # individual_thrust or angular_rates_and_thrust
         # nmpc_mode: "angular_rates_and_thrust" # individual_thrust or angular_rates_and_thrust
