@@ -8,10 +8,10 @@
 
       # This is the Weight Matrix that penalize state error in FC
       # {W_position_xy, W_position_z, W_rotation_xy, W_rotation_z, W_speed, W_angular_speed}
-      Q: [20.0, 13.0, 0.3, 5.0, 0.3, 0.3] # Real drone gains 
+      Q: [40.0, 30.0, 0.3, 5.0, 0.3, 1.0] # Real drone gains 
 
       # This is the weight Matrix that penalize input control effort in FC
-      R: 0.5 # stable on gazebo
+      R: 1.0 # stable on gazebo
         
 
 
