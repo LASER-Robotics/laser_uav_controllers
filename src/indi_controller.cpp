@@ -18,6 +18,9 @@ IndiController::IndiController(quadrotor_t quadrotor_params) {
   G2_ = quadrotor_params.G2;
 
   inertia_matrix_ = quadrotor_params.inertia_matrix;
+
+  thrust_max_ = quadrotor_params.thrust_max;
+  thrust_min_ = quadrotor_params.thrust_min;
 }
 //}
 
@@ -38,6 +41,11 @@ Eigen::VectorXd IndiController::getCorrection(Eigen::Vector3d& angular_accelerat
 
   u_ = ((G1_ * thrust_coefficient_).inverse() * desired_command).cwiseMax(0).cwiseSqrt();
   u_ = u_.cwiseProduct(u_) * thrust_coefficient_;
+
+  for (auto i = 0; i < u_.size(); i++) {
+    u_(i) = std::max(thrust_min_, u_(i));
+    u_(i) = std::min(thrust_max_, u_(i));
+  }
 
   return u_;
 }
