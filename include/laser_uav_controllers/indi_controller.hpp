@@ -16,13 +16,14 @@ public:
 private:
   double dt = 0.004;
   double thrust_coefficient_;
+  double thrust_max_;
+  double thrust_min_;
 
   Eigen::MatrixXd G1_;
   Eigen::MatrixXd G2_;
   Eigen::Matrix3d inertia_matrix_;
 
   Eigen::VectorXd motor_speed_estimated_prev_;
-
   Eigen::VectorXd u_;
 };
 }  // namespace laser_uav_controllers
