@@ -29,6 +29,7 @@ struct quadrotor_t
 
 double thrustToThrotle(double a, double b, double thrust);
 double thrustToThrotle(double a, double b, double thrust, double thrust_max, double thrust_min);
+double throtleToThrust(double a, double b, double throtle);
 }  // namespace laser_uav_controllers
 
 #endif
