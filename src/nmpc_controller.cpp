@@ -8,7 +8,7 @@ NmpcController::NmpcController() {
 //}
 
 /* NmpcController() //{ */
-NmpcController::NmpcController(quadrotor_t quadrotor_params, acados_t acados_params) {
+NmpcController::NmpcController(multirotor_t multirotor_params, acados_t acados_params) {
   if (acados_params.nmpc_mode == "individual_thrust") {
     angular_rates_and_thrust_mode_ = false;
   } else {
@@ -16,30 +16,30 @@ NmpcController::NmpcController(quadrotor_t quadrotor_params, acados_t acados_par
   }
 
   std::cout << "creating acados ocp solver" << std::endl;
-  acados_ocp_capsule = quadrotor_ode_acados_create_capsule();
+  acados_ocp_capsule = multirotor_ode_acados_create_capsule();
   N                  = acados_params.N;
 
   double* dt = new double[N];
   std::fill_n(dt, N, (N * acados_params.dt) / N);
-  int status = quadrotor_ode_acados_create_with_discretization(acados_ocp_capsule, N, dt);
+  int status = multirotor_ode_acados_create_with_discretization(acados_ocp_capsule, N, dt);
 
   if (status) {
     printf("creation of acados ocp solver returned status %d. Exiting.\n", status);
     exit(1);
   }
 
-  n_motors_ = quadrotor_params.n_motors;
+  n_motors_ = multirotor_params.n_motors;
 
-  parameters_[params_e::mass] = quadrotor_params.mass;
-  for (auto i = 0; i < quadrotor_params.G1.rows(); i++) {
+  parameters_[params_e::mass] = multirotor_params.mass;
+  for (auto i = 0; i < multirotor_params.G1.rows(); i++) {
     auto j = i * 8;
-    for (auto k = 0; k < quadrotor_params.G1.cols(); k++) {
-      parameters_[params_e::G1 + j + k] = quadrotor_params.G1(i, k);
+    for (auto k = 0; k < multirotor_params.G1.cols(); k++) {
+      parameters_[params_e::G1 + j + k] = multirotor_params.G1(i, k);
     }
   }
-  Eigen::Vector3d aux = quadrotor_params.inertia_matrix.diagonal();
+  Eigen::Vector3d aux = multirotor_params.inertia_matrix.diagonal();
   std::copy(aux.data(), aux.data() + aux.size(), &parameters_[params_e::inertia]);
-  std::copy(quadrotor_params.drag.data(), quadrotor_params.drag.data() + quadrotor_params.drag.size(), &parameters_[params_e::drag]);
+  std::copy(multirotor_params.drag.data(), multirotor_params.drag.data() + multirotor_params.drag.size(), &parameters_[params_e::drag]);
 
   /* // --- Set Nominal Quaternion in Initialize */
   parameters_[params_e::qw_reference] = 1;
@@ -47,8 +47,8 @@ NmpcController::NmpcController(quadrotor_t quadrotor_params, acados_t acados_par
   parameters_[params_e::qy_reference] = 0;
   parameters_[params_e::qz_reference] = 0;
 
-  motor_curve_a_ = quadrotor_params.motor_curve_a;
-  motor_curve_b_ = quadrotor_params.motor_curve_b;
+  motor_curve_a_ = multirotor_params.motor_curve_a;
+  motor_curve_b_ = multirotor_params.motor_curve_b;
 
   // --- Calculate Hover Thrust in Newtons
   hover_thrust_ = (parameters_[params_e::mass] * GRAVITY) / n_motors_;
@@ -99,13 +99,13 @@ NmpcController::NmpcController(quadrotor_t quadrotor_params, acados_t acados_par
 
   /* // --- Set Thrust Constraint */
   double lg = 0;
-  double ug = quadrotor_params.total_thrust_max;
+  double ug = multirotor_params.total_thrust_max;
   double lbu[8];
   double ubu[8];
   for (auto i = 0; i < 8; i++) {
     if (i < n_motors_) {
-      lbu[i] = quadrotor_params.thrust_min;
-      ubu[i] = quadrotor_params.thrust_max;
+      lbu[i] = multirotor_params.thrust_min;
+      ubu[i] = multirotor_params.thrust_max;
     } else {
       lbu[i] = 0;
       ubu[i] = 0;
@@ -202,7 +202,7 @@ void NmpcController::setTrajectory(std::vector<laser_msgs::msg::ReferenceState> 
 
     // --- Set Reference in Acados
     ocp_nlp_cost_model_set(acados_ocp_capsule->nlp_config, acados_ocp_capsule->nlp_dims, acados_ocp_capsule->nlp_in, i, "yref", yref_for_acados);
-    quadrotor_ode_acados_update_params(acados_ocp_capsule, i, parameters_, NP);
+    multirotor_ode_acados_update_params(acados_ocp_capsule, i, parameters_, NP);
   }
 }
 //}
@@ -212,10 +212,10 @@ bool NmpcController::ocpSolver() {
   // --- Sets the first iteration phase that will start solving the problem
   int rti_phase = 0;
   ocp_nlp_solver_opts_set(acados_ocp_capsule->nlp_config, acados_ocp_capsule->nlp_opts, "rti_phase", &rti_phase);
-  int status = quadrotor_ode_acados_solve(acados_ocp_capsule);
+  int status = multirotor_ode_acados_solve(acados_ocp_capsule);
 
   if (status != ACADOS_SUCCESS) {
-    printf("quadrotor_ode_acados_solve() failed with status %d.\n", status);
+    printf("multirotor_ode_acados_solve() failed with status %d.\n", status);
     return false;
   }
   return true;
@@ -299,6 +299,13 @@ std::vector<double> NmpcController::getLastIndividualThrust() {
   aux.push_back(u0_[control_input_e::w4]);
 
   return aux;
+}
+//}
+
+///* setMass() //{ */
+void NmpcController::setMass(double mass) {
+  parameters_[params_e::mass] = mass;
+  hover_thrust_               = (parameters_[params_e::mass] * GRAVITY) / n_motors_;
 }
 //}
 

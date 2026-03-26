@@ -8,7 +8,7 @@ namespace laser_uav_controllers
 class IndiController {
 public:
   IndiController();
-  IndiController(quadrotor_t quadrotor_params);
+  IndiController(multirotor_t multirotor_params);
 
   Eigen::VectorXd getCorrection(Eigen::Vector3d& angular_acceleration_estimated, Eigen::VectorXd& motor_speed_estimated, Eigen::VectorXd& individual_thrust,
                                 Eigen::Vector3d& angular_speed /*, double dt*/);

@@ -8,19 +8,19 @@ IndiController::IndiController() {
 //}
 
 /* IndiController() //{ */
-IndiController::IndiController(quadrotor_t quadrotor_params) {
-  u_                          = Eigen::VectorXd(quadrotor_params.n_motors);
-  motor_speed_estimated_prev_ = Eigen::VectorXd(quadrotor_params.n_motors);
+IndiController::IndiController(multirotor_t multirotor_params) {
+  u_                          = Eigen::VectorXd(multirotor_params.n_motors);
+  motor_speed_estimated_prev_ = Eigen::VectorXd(multirotor_params.n_motors);
 
-  thrust_coefficient_ = quadrotor_params.c_thrust;
+  thrust_coefficient_ = multirotor_params.c_thrust;
 
-  G1_ = quadrotor_params.G1;
-  G2_ = quadrotor_params.G2;
+  G1_ = multirotor_params.G1;
+  G2_ = multirotor_params.G2;
 
-  inertia_matrix_ = quadrotor_params.inertia_matrix;
+  inertia_matrix_ = multirotor_params.inertia_matrix;
 
-  thrust_max_ = quadrotor_params.thrust_max;
-  thrust_min_ = quadrotor_params.thrust_min;
+  thrust_max_ = multirotor_params.thrust_max;
+  thrust_min_ = multirotor_params.thrust_min;
 }
 //}
 

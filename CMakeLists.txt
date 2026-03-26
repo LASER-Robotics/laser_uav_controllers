@@ -21,7 +21,7 @@ find_package(Boost REQUIRED)
 
 set(acados_include "$ENV{ACADOS_SOURCE_DIR}/include")
 set(acados_lib "$ENV{ACADOS_SOURCE_DIR}/lib")
-set(full_model_build ${CMAKE_CURRENT_SOURCE_DIR}/scripts/quadrotor_ode/)
+set(full_model_build ${CMAKE_CURRENT_SOURCE_DIR}/scripts/multirotor_ode/)
 
 set(dependencies
 Eigen3
@@ -53,7 +53,7 @@ add_library(laser_uav_controllers SHARED
 )
 
 target_link_libraries(laser_uav_controllers
-  ${full_model_build}/libacados_ocp_solver_quadrotor_ode.so
+  ${full_model_build}/libacados_ocp_solver_multirotor_ode.so
 	${acados_lib}/libacados.so
 )
 
@@ -69,7 +69,7 @@ install(TARGETS laser_uav_controllers
   RUNTIME DESTINATION bin
 )
 
-install(FILES ${full_model_build}/libacados_ocp_solver_quadrotor_ode.so 
+install(FILES ${full_model_build}/libacados_ocp_solver_multirotor_ode.so 
   DESTINATION lib
 )
 

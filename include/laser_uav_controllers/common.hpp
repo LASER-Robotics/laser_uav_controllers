@@ -8,8 +8,8 @@ namespace laser_uav_controllers
 {
 #define GRAVITY 9.80665
 
-/* quadrotor_t //{ */
-struct quadrotor_t
+/* multirotor_t //{ */
+struct multirotor_t
 {
   double          mass;
   int             n_motors;

@@ -12,8 +12,8 @@
 #include <blasfeo/include/blasfeo_d_aux.h>
 #include <blasfeo/include/blasfeo_d_aux_ext_dep.h>
 
-#include <quadrotor_ode_model/quadrotor_ode_model.h>
-#include <acados_solver_quadrotor_ode.h>
+#include <multirotor_ode_model/multirotor_ode_model.h>
+#include <acados_solver_multirotor_ode.h>
 
 #include <nav_msgs/msg/odometry.hpp>
 
@@ -22,11 +22,11 @@
 
 namespace laser_uav_controllers
 {
-#define NX QUADROTOR_ODE_NX
-#define NU QUADROTOR_ODE_NU
-#define NY QUADROTOR_ODE_NY
-#define NYN QUADROTOR_ODE_NYN
-#define NP QUADROTOR_ODE_NP
+#define NX MULTIROTOR_ODE_NX
+#define NU MULTIROTOR_ODE_NU
+#define NY MULTIROTOR_ODE_NY
+#define NYN MULTIROTOR_ODE_NYN
+#define NP MULTIROTOR_ODE_NP
 
 /* acados_t //{ */
 struct acados_t
@@ -42,12 +42,13 @@ struct acados_t
 class NmpcController {
 public:
   NmpcController();
-  NmpcController(quadrotor_t quadrotor_params, acados_t acados_params);
+  NmpcController(multirotor_t multirotor_params, acados_t acados_params);
 
   Eigen::VectorXd getCorrection(laser_msgs::msg::ReferenceState reference, const nav_msgs::msg::Odometry msg);
   Eigen::VectorXd getCorrection(std::vector<laser_msgs::msg::ReferenceState> trajectory, const nav_msgs::msg::Odometry msg);
 
   std::vector<double> getLastIndividualThrust();
+  void setMass(double mass);
 
 private:
   void setInitState();
@@ -122,7 +123,7 @@ private:
 
   double parameters_[NP] = {0};
 
-  quadrotor_ode_solver_capsule *acados_ocp_capsule;
+  multirotor_ode_solver_capsule *acados_ocp_capsule;
 
   bool angular_rates_and_thrust_mode_;
 };
