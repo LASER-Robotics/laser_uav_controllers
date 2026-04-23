@@ -719,12 +719,12 @@ void multirotor_ode_acados_setup_nlp_in(multirotor_ode_solver_capsule* capsule, 
     double* lubx = calloc(2*NBX, sizeof(double));
     double* lbx = lubx;
     double* ubx = lubx + NBX;
-    lbx[0] = -20;
-    ubx[0] = 20;
-    lbx[1] = -20;
-    ubx[1] = 20;
-    lbx[2] = -8;
-    ubx[2] = 8;
+    lbx[0] = -10;
+    ubx[0] = 10;
+    lbx[1] = -10;
+    ubx[1] = 10;
+    lbx[2] = -4;
+    ubx[2] = 4;
 
     for (int i = 1; i < N; i++)
     {
