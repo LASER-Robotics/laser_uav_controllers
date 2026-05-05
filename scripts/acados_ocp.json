@@ -1,7 +1,7 @@
 {
-    "acados_include_path": "/home/augusto/laser_uav_system_ws/src/laser_uav_controllers/acados/include",
-    "acados_lib_path": "/home/augusto/laser_uav_system_ws/src/laser_uav_controllers/acados/lib",
-    "code_export_directory": "/home/augusto/git/laser_uav_system/.gitman/laser_uav_controllers/scripts/multirotor_ode",
+    "acados_include_path": "/home/carrara/laser_uav_system_ws/src/laser_uav_controllers/acados/include",
+    "acados_lib_path": "/home/carrara/laser_uav_system_ws/src/laser_uav_controllers/acados/lib",
+    "code_export_directory": "/home/carrara/git/laser_uav_system/.gitman/laser_uav_controllers/scripts/multirotor_ode",
     "constraints": {
         "C": [
             [
@@ -1345,7 +1345,7 @@
         "zu_e": []
     },
     "cython_include_dirs": [
-        "/home/augusto/.local/lib/python3.10/site-packages/numpy/core/include",
+        "/usr/lib/python3/dist-packages/numpy/core/include",
         "/usr/include/python3.10"
     ],
     "dims": {
