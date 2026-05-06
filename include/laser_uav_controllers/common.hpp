@@ -19,6 +19,7 @@ struct multirotor_t
   double          motor_inertia;
   double          c_thrust;
   Eigen::Vector3d drag;
+  Eigen::Vector3d omega_max;
   double          thrust_min;
   double          thrust_max;
   double          total_thrust_max;

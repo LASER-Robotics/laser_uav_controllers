@@ -50,11 +50,13 @@ lk = np.array([1,1,1,1,1,1,1,1])
 # lk = np.array([1,1,1,1])
 Jbu = np.identity(nu) # matrix for assigning thrust constrain matrix to corresponding input variables
 ocp.constraints.Jbu = Jbu
+# print(Jbu)
 ocp.constraints.lbu = thrust_min * lk
 ocp.constraints.ubu = thrust_max * lk
 ocp.constraints.D = np.ones((1, nu))
 ocp.constraints.C = np.zeros((1, nx))
 ocp.constraints.ug = np.ones((1)) * thrust_total_max
+# print(np.ones((1)) * thrust_total_max)
 ocp.constraints.lg = np.ones((1)) * thrust_total_min
 
 init_state = np.zeros([nx])
