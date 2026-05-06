@@ -31,7 +31,7 @@ G1 = [1,1,1,1,0,0,0,0,
 ocp.parameter_values = np.concatenate([[mass], G1, inertia, C_drag, q_ref_init])
 
 #Constraints
-omega_max = np.array([20.0, 20.0, 8.0])  # [rad/s]
+omega_max = np.array([10.0, 10.0, 4.0])  # [rad/s]
 thrust_min = 0.0       # [N]
 thrust_max = 15.7       # [N] per motor
 thrust_total_max = 62.8 # [N] total thrust
@@ -50,11 +50,13 @@ lk = np.array([1,1,1,1,1,1,1,1])
 # lk = np.array([1,1,1,1])
 Jbu = np.identity(nu) # matrix for assigning thrust constrain matrix to corresponding input variables
 ocp.constraints.Jbu = Jbu
+# print(Jbu)
 ocp.constraints.lbu = thrust_min * lk
 ocp.constraints.ubu = thrust_max * lk
 ocp.constraints.D = np.ones((1, nu))
 ocp.constraints.C = np.zeros((1, nx))
 ocp.constraints.ug = np.ones((1)) * thrust_total_max
+# print(np.ones((1)) * thrust_total_max)
 ocp.constraints.lg = np.ones((1)) * thrust_total_min
 
 init_state = np.zeros([nx])

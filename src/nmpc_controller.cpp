@@ -97,39 +97,55 @@ NmpcController::NmpcController(multirotor_t multirotor_params, acados_t acados_p
 
   ocp_nlp_cost_model_set(acados_ocp_capsule->nlp_config, acados_ocp_capsule->nlp_dims, acados_ocp_capsule->nlp_in, N, "W", W_e);
 
+  /* // --- Set Omega Constrint */
+  double omega_max[3];
+  omega_max[0] = multirotor_params.omega_max(0);
+  omega_max[1] = multirotor_params.omega_max(1);
+  omega_max[2] = multirotor_params.omega_max(2);
+
+  double omega_min[3];
+  omega_min[0] = -multirotor_params.omega_max(0);
+  omega_min[1] = -multirotor_params.omega_max(1);
+  omega_min[2] = -multirotor_params.omega_max(2);
+
+  for (int i = 0; i < N; i++) {
+    ocp_nlp_constraints_model_set(acados_ocp_capsule->nlp_config, acados_ocp_capsule->nlp_dims, acados_ocp_capsule->nlp_in, acados_ocp_capsule->nlp_out, i,
+                                  "ubx", omega_max);
+    ocp_nlp_constraints_model_set(acados_ocp_capsule->nlp_config, acados_ocp_capsule->nlp_dims, acados_ocp_capsule->nlp_in, acados_ocp_capsule->nlp_out, i,
+                                  "lbx", omega_min);
+  }
+
   /* // --- Set Thrust Constraint */
-  double lg = 0;
-  double ug = multirotor_params.total_thrust_max;
+  double lg[1] = {0};
+  double ug[1] = {multirotor_params.total_thrust_max};
   double lbu[8];
   double ubu[8];
+  double D[8];
   for (auto i = 0; i < 8; i++) {
     if (i < n_motors_) {
+      D[i]   = 1.0;
       lbu[i] = multirotor_params.thrust_min;
       ubu[i] = multirotor_params.thrust_max;
     } else {
+      D[i]   = 0.0;
       lbu[i] = 0;
       ubu[i] = 0;
     }
   }
 
   for (int i = 0; i < N; i++) {
+    ocp_nlp_constraints_model_set(acados_ocp_capsule->nlp_config, acados_ocp_capsule->nlp_dims, acados_ocp_capsule->nlp_in, acados_ocp_capsule->nlp_out, i, "D",
+                                  D);
+
     ocp_nlp_constraints_model_set(acados_ocp_capsule->nlp_config, acados_ocp_capsule->nlp_dims, acados_ocp_capsule->nlp_in, acados_ocp_capsule->nlp_out, i,
-
-
                                   "lbu", lbu);
     ocp_nlp_constraints_model_set(acados_ocp_capsule->nlp_config, acados_ocp_capsule->nlp_dims, acados_ocp_capsule->nlp_in, acados_ocp_capsule->nlp_out, i,
-
-
                                   "ubu", ubu);
 
     ocp_nlp_constraints_model_set(acados_ocp_capsule->nlp_config, acados_ocp_capsule->nlp_dims, acados_ocp_capsule->nlp_in, acados_ocp_capsule->nlp_out, i,
-
-
-                                  "lg", &lg);
+                                  "lg", lg);
     ocp_nlp_constraints_model_set(acados_ocp_capsule->nlp_config, acados_ocp_capsule->nlp_dims, acados_ocp_capsule->nlp_in, acados_ocp_capsule->nlp_out, i,
-
-
-                                  "ug", &ug);
+                                  "ug", ug);
   }
 }
 //}
@@ -137,9 +153,9 @@ NmpcController::NmpcController(multirotor_t multirotor_params, acados_t acados_p
 /* setInitState() //{ */
 void NmpcController::setInitState() {
   // --- Set Initial State in Acados
-  ocp_nlp_constraints_model_set(acados_ocp_capsule->nlp_config, acados_ocp_capsule->nlp_dims, acados_ocp_capsule->nlp_in, acados_ocp_capsule->nlp_out, 0, "lbx",
-                                x0_);
   ocp_nlp_constraints_model_set(acados_ocp_capsule->nlp_config, acados_ocp_capsule->nlp_dims, acados_ocp_capsule->nlp_in, acados_ocp_capsule->nlp_out, 0, "ubx",
+                                x0_);
+  ocp_nlp_constraints_model_set(acados_ocp_capsule->nlp_config, acados_ocp_capsule->nlp_dims, acados_ocp_capsule->nlp_in, acados_ocp_capsule->nlp_out, 0, "lbx",
                                 x0_);
 }
 //}
@@ -310,7 +326,7 @@ void NmpcController::setMass(double mass) {
 //}
 
 ///* getCorrection() //{ */
-Eigen::VectorXd NmpcController::getCorrection(laser_msgs::msg::ReferenceState reference, const nav_msgs::msg::Odometry msg) {
+std::pair<Eigen::Vector3d, Eigen::VectorXd> NmpcController::getCorrection(laser_msgs::msg::ReferenceState reference, const nav_msgs::msg::Odometry msg) {
   // --- Init Thrust is hover thrust assumption
   for (auto i = 0; i < 8; i++) {
     if (i < n_motors_) {
@@ -354,32 +370,25 @@ Eigen::VectorXd NmpcController::getCorrection(laser_msgs::msg::ReferenceState re
     getFirstComputedStates();
   }
 
+  Eigen::Vector3d desired_angular_speed;
   Eigen::VectorXd control_input;
-  // --- Fill the input control message to pixhawk
-  if (angular_rates_and_thrust_mode_) {
-    control_input    = Eigen::VectorXd::Zero(4);
-    control_input(0) = 0;
-    for (auto i = 0; i < n_motors_; i++) {
-      control_input(0) += u0_[i];
-    }
-    control_input(0) += thrustToThrotle(motor_curve_a_, motor_curve_b_, control_input(0) / n_motors_);
 
-    control_input(1) = x1_[states_e::wx];
-    control_input(2) = x1_[states_e::wy];
-    control_input(3) = x1_[states_e::wz];
-  } else {  // --- Fill the input control message to INDI
-    control_input = Eigen::VectorXd::Zero(n_motors_);
-    for (auto i = 0; i < n_motors_; i++) {
-      control_input(i) = u0_[i];
-    }
+  desired_angular_speed(0) = x1_[states_e::wx];
+  desired_angular_speed(1) = x1_[states_e::wy];
+  desired_angular_speed(2) = x1_[states_e::wz];
+
+  control_input = Eigen::VectorXd::Zero(n_motors_);
+  for (auto i = 0; i < n_motors_; i++) {
+    control_input(i) = u0_[i];
   }
 
-  return control_input;
+  return {desired_angular_speed, control_input};
 }
 //}
 
 ///* getCorrection() //{ */
-Eigen::VectorXd NmpcController::getCorrection(std::vector<laser_msgs::msg::ReferenceState> trajectory, const nav_msgs::msg::Odometry msg) {
+std::pair<Eigen::Vector3d, Eigen::VectorXd> NmpcController::getCorrection(std::vector<laser_msgs::msg::ReferenceState> trajectory,
+                                                                          const nav_msgs::msg::Odometry                msg) {
   // --- Init Thrust is hover thrust assumption
   for (auto i = 0; i < 8; i++) {
     if (i < n_motors_) {
@@ -421,27 +430,19 @@ Eigen::VectorXd NmpcController::getCorrection(std::vector<laser_msgs::msg::Refer
     getFirstComputedStates();
   }
 
+  Eigen::Vector3d desired_angular_speed;
   Eigen::VectorXd control_input;
-  // --- Fill the input control message to pixhawk
-  if (angular_rates_and_thrust_mode_) {
-    control_input    = Eigen::VectorXd::Zero(4);
-    control_input(0) = 0;
-    for (auto i = 0; i < n_motors_; i++) {
-      control_input(0) += u0_[i];
-    }
-    control_input(0) += thrustToThrotle(motor_curve_a_, motor_curve_b_, control_input(0) / n_motors_);
 
-    control_input(1) = x1_[states_e::wx];
-    control_input(2) = x1_[states_e::wy];
-    control_input(3) = x1_[states_e::wz];
-  } else {  // --- Fill the input control message to INDI
-    control_input = Eigen::VectorXd::Zero(n_motors_);
-    for (auto i = 0; i < n_motors_; i++) {
-      control_input(i) = u0_[i];
-    }
+  desired_angular_speed(0) = x1_[states_e::wx];
+  desired_angular_speed(1) = x1_[states_e::wy];
+  desired_angular_speed(2) = x1_[states_e::wz];
+
+  control_input = Eigen::VectorXd::Zero(n_motors_);
+  for (auto i = 0; i < n_motors_; i++) {
+    control_input(i) = u0_[i];
   }
 
-  return control_input;
+  return {desired_angular_speed, control_input};
 }
 //}
 }  // namespace laser_uav_controllers

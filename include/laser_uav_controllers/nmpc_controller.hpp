@@ -44,11 +44,11 @@ public:
   NmpcController();
   NmpcController(multirotor_t multirotor_params, acados_t acados_params);
 
-  Eigen::VectorXd getCorrection(laser_msgs::msg::ReferenceState reference, const nav_msgs::msg::Odometry msg);
-  Eigen::VectorXd getCorrection(std::vector<laser_msgs::msg::ReferenceState> trajectory, const nav_msgs::msg::Odometry msg);
+  std::pair<Eigen::Vector3d, Eigen::VectorXd> getCorrection(laser_msgs::msg::ReferenceState reference, const nav_msgs::msg::Odometry msg);
+  std::pair<Eigen::Vector3d, Eigen::VectorXd> getCorrection(std::vector<laser_msgs::msg::ReferenceState> trajectory, const nav_msgs::msg::Odometry msg);
 
   std::vector<double> getLastIndividualThrust();
-  void setMass(double mass);
+  void                setMass(double mass);
 
 private:
   void setInitState();
