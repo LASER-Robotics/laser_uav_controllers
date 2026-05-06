@@ -120,23 +120,17 @@ NmpcController::NmpcController(multirotor_t multirotor_params, acados_t acados_p
   double ug[1] = {multirotor_params.total_thrust_max};
   double lbu[8];
   double ubu[8];
-  double D[8];
   for (auto i = 0; i < 8; i++) {
     if (i < n_motors_) {
-      D[i]   = 1.0;
       lbu[i] = multirotor_params.thrust_min;
       ubu[i] = multirotor_params.thrust_max;
     } else {
-      D[i]   = 0.0;
       lbu[i] = 0;
       ubu[i] = 0;
     }
   }
 
   for (int i = 0; i < N; i++) {
-    ocp_nlp_constraints_model_set(acados_ocp_capsule->nlp_config, acados_ocp_capsule->nlp_dims, acados_ocp_capsule->nlp_in, acados_ocp_capsule->nlp_out, i, "D",
-                                  D);
-
     ocp_nlp_constraints_model_set(acados_ocp_capsule->nlp_config, acados_ocp_capsule->nlp_dims, acados_ocp_capsule->nlp_in, acados_ocp_capsule->nlp_out, i,
                                   "lbu", lbu);
     ocp_nlp_constraints_model_set(acados_ocp_capsule->nlp_config, acados_ocp_capsule->nlp_dims, acados_ocp_capsule->nlp_in, acados_ocp_capsule->nlp_out, i,
