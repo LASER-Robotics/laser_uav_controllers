@@ -257,6 +257,15 @@ void NmpcController::printStatistics() {
 }
 //}
 
+/* getTotalElapsedTime() //{ */
+double NmpcController::getOcpElapsedTime() {
+  double elapsed_time;
+  ocp_nlp_get(acados_ocp_capsule->nlp_solver, "time_tot", &elapsed_time);
+
+  return elapsed_time * 1000;
+}
+//}
+
 ///* getFirstControlInput() //{ */
 void NmpcController::getFirstControlInput() {
   ocp_nlp_out_get(acados_ocp_capsule->nlp_config, acados_ocp_capsule->nlp_dims, acados_ocp_capsule->nlp_out, 0, "u", &u0_);

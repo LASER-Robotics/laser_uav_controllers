@@ -49,6 +49,7 @@ public:
 
   std::vector<double> getLastIndividualThrust();
   void                setMass(double mass);
+  double getOcpElapsedTime();
 
 private:
   void setInitState();
