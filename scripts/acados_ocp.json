@@ -1,7 +1,7 @@
 {
-    "acados_include_path": "/home/augusto/laser_uav_system_ws/src/laser_uav_controllers/acados/include",
-    "acados_lib_path": "/home/augusto/laser_uav_system_ws/src/laser_uav_controllers/acados/lib",
-    "code_export_directory": "/home/augusto/git/laser_uav_system/.gitman/laser_uav_controllers/scripts/multirotor_ode",
+    "acados_include_path": "/home/conrado/laser_uav_system_ws/src/laser_uav_controllers/acados/include",
+    "acados_lib_path": "/home/conrado/laser_uav_system_ws/src/laser_uav_controllers/acados/lib",
+    "code_export_directory": "/home/conrado/git/laser_uav_system/.gitman/laser_uav_controllers/scripts/multirotor_ode",
     "constraints": {
         "C": [
             [
@@ -88,7 +88,13 @@
         "idxsbx_e": [],
         "idxsg": [],
         "idxsg_e": [],
-        "idxsh": [],
+        "idxsh": [
+            0,
+            1,
+            2,
+            3,
+            4
+        ],
         "idxsh_0": [],
         "idxsh_e": [],
         "idxsphi": [],
@@ -129,7 +135,13 @@
             0.0
         ],
         "lg_e": [],
-        "lh": [],
+        "lh": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+        ],
         "lh_0": [],
         "lh_e": [],
         "lphi": [],
@@ -140,7 +152,13 @@
         "lsbx_e": [],
         "lsg": [],
         "lsg_e": [],
-        "lsh": [],
+        "lsh": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+        ],
         "lsh_0": [],
         "lsh_e": [],
         "lsphi": [],
@@ -181,7 +199,13 @@
             62.8
         ],
         "ug_e": [],
-        "uh": [],
+        "uh": [
+            10000.0,
+            10000.0,
+            10000.0,
+            10000.0,
+            10000.0
+        ],
         "uh_0": [],
         "uh_e": [],
         "uphi": [],
@@ -192,7 +216,13 @@
         "usbx_e": [],
         "usg": [],
         "usg_e": [],
-        "ush": [],
+        "ush": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+        ],
         "ush_0": [],
         "ush_e": [],
         "usphi": [],
@@ -1261,10 +1291,22 @@
                 0.5
             ]
         ],
-        "Zl": [],
+        "Zl": [
+            10000.0,
+            10000.0,
+            10000.0,
+            10000.0,
+            10000.0
+        ],
         "Zl_0": [],
         "Zl_e": [],
-        "Zu": [],
+        "Zu": [
+            10000.0,
+            10000.0,
+            10000.0,
+            10000.0,
+            10000.0
+        ],
         "Zu_0": [],
         "Zu_e": [],
         "cost_ext_fun_type": "casadi",
@@ -1337,15 +1379,27 @@
             0,
             0
         ],
-        "zl": [],
+        "zl": [
+            1000.0,
+            1000.0,
+            1000.0,
+            1000.0,
+            1000.0
+        ],
         "zl_0": [],
         "zl_e": [],
-        "zu": [],
+        "zu": [
+            1000.0,
+            1000.0,
+            1000.0,
+            1000.0,
+            1000.0
+        ],
         "zu_0": [],
         "zu_e": []
     },
     "cython_include_dirs": [
-        "/home/augusto/.local/lib/python3.10/site-packages/numpy/core/include",
+        "/usr/lib/python3/dist-packages/numpy/core/include",
         "/usr/include/python3.10"
     ],
     "dims": {
@@ -1358,10 +1412,10 @@
         "nbxe_0": 13,
         "ng": 1,
         "ng_e": 0,
-        "nh": 0,
+        "nh": 5,
         "nh_0": 0,
         "nh_e": 0,
-        "np": 43,
+        "np": 63,
         "np_global": 0,
         "nphi": 0,
         "nphi_0": 0,
@@ -1369,7 +1423,7 @@
         "nr": 0,
         "nr_0": 0,
         "nr_e": 0,
-        "ns": 0,
+        "ns": 5,
         "ns_0": 0,
         "ns_e": 0,
         "nsbu": 0,
@@ -1377,7 +1431,7 @@
         "nsbx_e": 0,
         "nsg": 0,
         "nsg_e": 0,
-        "nsh": 0,
+        "nsh": 5,
         "nsh_0": 0,
         "nsh_e": 0,
         "nsphi": 0,
@@ -1397,6 +1451,8 @@
         "multirotor_ode_model/multirotor_ode_expl_vde_adj.c"
     ],
     "external_function_files_ocp": [
+        "multirotor_ode_constraints/multirotor_ode_constr_h_fun_jac_uxt_zt.c",
+        "multirotor_ode_constraints/multirotor_ode_constr_h_fun.c",
         "multirotor_ode_cost/multirotor_ode_cost_y_0_fun.c",
         "multirotor_ode_cost/multirotor_ode_cost_y_0_fun_jac_ut_xt.c",
         "multirotor_ode_cost/multirotor_ode_cost_y_0_hess.c",
@@ -1409,7 +1465,7 @@
     ],
     "json_file": "./acados_ocp.json",
     "model": {
-        "con_h_expr": [],
+        "con_h_expr": "jhpnnagiieahaaaadaaaaaaaaaaaaaaaaaegjaaaaaaaaaaaaaaafaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaafaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaacaaaaaaaaaaaaaaadaaaaaaaaaaaaaaaeaaaaaaaaaaaaaaafaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaegdaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaafaaaaaaabepfngpfadegpcaaaaaaaaaaaaaadaaaaaaaghpfadegdaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaafaaaaaaabepfngpfbdegpcaaaaaaaaaaaaaadaaaaaaaghpfbdegdaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaafaaaaaaabepfngpfcdegpcaaaaaaaaaaaaaadaaaaaaaghpfcdegpcaaaaaaaaaaaaaafaaaaaaacgpfngpfadegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaegdaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaafaaaaaaabepfngpfddchcaaaaaaaaaaaaaaaegdaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaafaaaaaaabepfngpfedchfaaaaaaaaaaaaaaaegdaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaafaaaaaaabepfngpffdchjaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaafaaaaaaacgpfngpfbdegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaegdaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaafaaaaaaabepfngpfgdchcaaaaaaaaaaaaaaaegdaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaafaaaaaaabepfngpfhdchfaaaaaaaaaaaaaaaegdaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaafaaaaaaabepfngpfidchjaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaafaaaaaaacgpfngpfcdegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaegdaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaafaaaaaaabepfngpfjdchcaaaaaaaaaaaaaaaegdaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaagaaaaaaabepfngpfbdadchfaaaaaaaaaaaaaaaegdaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaagaaaaaaabepfngpfbdbdchjaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaafaaaaaaacgpfngpfddegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaegdaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaagaaaaaaabepfngpfbdcdchcaaaaaaaaaaaaaaaegdaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaagaaaaaaabepfngpfbdddchfaaaaaaaaaaaaaaaegdaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaagaaaaaaabepfngpfbdedchjaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaafaaaaaaacgpfngpfed",
         "con_h_expr_0": [],
         "con_h_expr_e": [],
         "con_phi_expr": [],
@@ -1454,7 +1510,7 @@
         "gnsf_purely_linear": 0,
         "name": "multirotor_ode",
         "nu_original": null,
-        "p": "jhpnnagiieahaaaadaaaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaalcaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaalcaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaacaaaaaaaaaaaaaaadaaaaaaaaaaaaaaaeaaaaaaaaaaaaaaafaaaaaaaaaaaaaaagaaaaaaaaaaaaaaahaaaaaaaaaaaaaaaiaaaaaaaaaaaaaaajaaaaaaaaaaaaaaakaaaaaaaaaaaaaaalaaaaaaaaaaaaaaamaaaaaaaaaaaaaaanaaaaaaaaaaaaaaaoaaaaaaaaaaaaaaapaaaaaaaaaaaaaaaabaaaaaaaaaaaaaabbaaaaaaaaaaaaaacbaaaaaaaaaaaaaadbaaaaaaaaaaaaaaebaaaaaaaaaaaaaafbaaaaaaaaaaaaaagbaaaaaaaaaaaaaahbaaaaaaaaaaaaaaibaaaaaaaaaaaaaajbaaaaaaaaaaaaaakbaaaaaaaaaaaaaalbaaaaaaaaaaaaaambaaaaaaaaaaaaaanbaaaaaaaaaaaaaaobaaaaaaaaaaaaaapbaaaaaaaaaaaaaaacaaaaaaaaaaaaaabcaaaaaaaaaaaaaaccaaaaaaaaaaaaaadcaaaaaaaaaaaaaaecaaaaaaaaaaaaaafcaaaaaaaaaaaaaagcaaaaaaaaaaaaaahcaaaaaaaaaaaaaaicaaaaaaaaaaaaaajcaaaaaaaaaaaaaakcaaaaaaaaaaaaaalcaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaabaaaaaaangegpcaaaaaaaaaaaaaaeaaaaaaahebdpfadegpcaaaaaaaaaaaaaaeaaaaaaahebdpfbdegpcaaaaaaaaaaaaaaeaaaaaaahebdpfcdegpcaaaaaaaaaaaaaaeaaaaaaahebdpfddegpcaaaaaaaaaaaaaaeaaaaaaahebdpfedegpcaaaaaaaaaaaaaaeaaaaaaahebdpffdegpcaaaaaaaaaaaaaaeaaaaaaahebdpfgdegpcaaaaaaaaaaaaaaeaaaaaaahebdpfhdegpcaaaaaaaaaaaaaaeaaaaaaahebdpfidegpcaaaaaaaaaaaaaaeaaaaaaahebdpfjdegpcaaaaaaaaaaaaaafaaaaaaahebdpfbdadegpcaaaaaaaaaaaaaafaaaaaaahebdpfbdbdegpcaaaaaaaaaaaaaafaaaaaaahebdpfbdcdegpcaaaaaaaaaaaaaafaaaaaaahebdpfbdddegpcaaaaaaaaaaaaaafaaaaaaahebdpfbdedegpcaaaaaaaaaaaaaafaaaaaaahebdpfbdfdegpcaaaaaaaaaaaaaafaaaaaaahebdpfbdgdegpcaaaaaaaaaaaaaafaaaaaaahebdpfbdhdegpcaaaaaaaaaaaaaafaaaaaaahebdpfbdidegpcaaaaaaaaaaaaaafaaaaaaahebdpfbdjdegpcaaaaaaaaaaaaaafaaaaaaahebdpfcdadegpcaaaaaaaaaaaaaafaaaaaaahebdpfcdbdegpcaaaaaaaaaaaaaafaaaaaaahebdpfcdcdegpcaaaaaaaaaaaaaafaaaaaaahebdpfcdddegpcaaaaaaaaaaaaaafaaaaaaahebdpfcdedegpcaaaaaaaaaaaaaafaaaaaaahebdpfcdfdegpcaaaaaaaaaaaaaafaaaaaaahebdpfcdgdegpcaaaaaaaaaaaaaafaaaaaaahebdpfcdhdegpcaaaaaaaaaaaaaafaaaaaaahebdpfcdidegpcaaaaaaaaaaaaaafaaaaaaahebdpfcdjdegpcaaaaaaaaaaaaaafaaaaaaahebdpfddadegpcaaaaaaaaaaaaaafaaaaaaahebdpfddbdegpcaaaaaaaaaaaaaaiaaaaaaajepfegjgbghgpfadegpcaaaaaaaaaaaaaaiaaaaaaajepfegjgbghgpfbdegpcaaaaaaaaaaaaaaiaaaaaaajepfegjgbghgpfcdegpcaaaaaaaaaaaaaaiaaaaaaadepfegchbghgpfadegpcaaaaaaaaaaaaaaiaaaaaaadepfegchbghgpfbdegpcaaaaaaaaaaaaaaiaaaaaaadepfegchbghgpfcdegpcaaaaaaaaaaaaaaabaaaaaabhfhbgehfgchogjgpgogpfchfgggpfadegpcaaaaaaaaaaaaaaabaaaaaabhfhbgehfgchogjgpgogpfchfgggpfbdegpcaaaaaaaaaaaaaaabaaaaaabhfhbgehfgchogjgpgogpfchfgggpfcdegpcaaaaaaaaaaaaaaabaaaaaabhfhbgehfgchogjgpgogpfchfgggpfdd",
+        "p": "jhpnnagiieahaaaadaaaaaaaaaaaaaaaaaegdeaaaaaaaaaaaaaapdaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaapdaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaacaaaaaaaaaaaaaaadaaaaaaaaaaaaaaaeaaaaaaaaaaaaaaafaaaaaaaaaaaaaaagaaaaaaaaaaaaaaahaaaaaaaaaaaaaaaiaaaaaaaaaaaaaaajaaaaaaaaaaaaaaakaaaaaaaaaaaaaaalaaaaaaaaaaaaaaamaaaaaaaaaaaaaaanaaaaaaaaaaaaaaaoaaaaaaaaaaaaaaapaaaaaaaaaaaaaaaabaaaaaaaaaaaaaabbaaaaaaaaaaaaaacbaaaaaaaaaaaaaadbaaaaaaaaaaaaaaebaaaaaaaaaaaaaafbaaaaaaaaaaaaaagbaaaaaaaaaaaaaahbaaaaaaaaaaaaaaibaaaaaaaaaaaaaajbaaaaaaaaaaaaaakbaaaaaaaaaaaaaalbaaaaaaaaaaaaaambaaaaaaaaaaaaaanbaaaaaaaaaaaaaaobaaaaaaaaaaaaaapbaaaaaaaaaaaaaaacaaaaaaaaaaaaaabcaaaaaaaaaaaaaaccaaaaaaaaaaaaaadcaaaaaaaaaaaaaaecaaaaaaaaaaaaaafcaaaaaaaaaaaaaagcaaaaaaaaaaaaaahcaaaaaaaaaaaaaaicaaaaaaaaaaaaaajcaaaaaaaaaaaaaakcaaaaaaaaaaaaaalcaaaaaaaaaaaaaamcaaaaaaaaaaaaaancaaaaaaaaaaaaaaocaaaaaaaaaaaaaapcaaaaaaaaaaaaaaadaaaaaaaaaaaaaabdaaaaaaaaaaaaaacdaaaaaaaaaaaaaaddaaaaaaaaaaaaaaedaaaaaaaaaaaaaafdaaaaaaaaaaaaaagdaaaaaaaaaaaaaahdaaaaaaaaaaaaaaidaaaaaaaaaaaaaajdaaaaaaaaaaaaaakdaaaaaaaaaaaaaaldaaaaaaaaaaaaaamdaaaaaaaaaaaaaandaaaaaaaaaaaaaaodaaaaaaaaaaaaaapdaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaabaaaaaaangegpcaaaaaaaaaaaaaaeaaaaaaahebdpfadegpcaaaaaaaaaaaaaaeaaaaaaahebdpfbdegpcaaaaaaaaaaaaaaeaaaaaaahebdpfcdegpcaaaaaaaaaaaaaaeaaaaaaahebdpfddegpcaaaaaaaaaaaaaaeaaaaaaahebdpfedegpcaaaaaaaaaaaaaaeaaaaaaahebdpffdegpcaaaaaaaaaaaaaaeaaaaaaahebdpfgdegpcaaaaaaaaaaaaaaeaaaaaaahebdpfhdegpcaaaaaaaaaaaaaaeaaaaaaahebdpfidegpcaaaaaaaaaaaaaaeaaaaaaahebdpfjdegpcaaaaaaaaaaaaaafaaaaaaahebdpfbdadegpcaaaaaaaaaaaaaafaaaaaaahebdpfbdbdegpcaaaaaaaaaaaaaafaaaaaaahebdpfbdcdegpcaaaaaaaaaaaaaafaaaaaaahebdpfbdddegpcaaaaaaaaaaaaaafaaaaaaahebdpfbdedegpcaaaaaaaaaaaaaafaaaaaaahebdpfbdfdegpcaaaaaaaaaaaaaafaaaaaaahebdpfbdgdegpcaaaaaaaaaaaaaafaaaaaaahebdpfbdhdegpcaaaaaaaaaaaaaafaaaaaaahebdpfbdidegpcaaaaaaaaaaaaaafaaaaaaahebdpfbdjdegpcaaaaaaaaaaaaaafaaaaaaahebdpfcdadegpcaaaaaaaaaaaaaafaaaaaaahebdpfcdbdegpcaaaaaaaaaaaaaafaaaaaaahebdpfcdcdegpcaaaaaaaaaaaaaafaaaaaaahebdpfcdddegpcaaaaaaaaaaaaaafaaaaaaahebdpfcdedegpcaaaaaaaaaaaaaafaaaaaaahebdpfcdfdegpcaaaaaaaaaaaaaafaaaaaaahebdpfcdgdegpcaaaaaaaaaaaaaafaaaaaaahebdpfcdhdegpcaaaaaaaaaaaaaafaaaaaaahebdpfcdidegpcaaaaaaaaaaaaaafaaaaaaahebdpfcdjdegpcaaaaaaaaaaaaaafaaaaaaahebdpfddadegpcaaaaaaaaaaaaaafaaaaaaahebdpfddbdegpcaaaaaaaaaaaaaaiaaaaaaajepfegjgbghgpfadegpcaaaaaaaaaaaaaaiaaaaaaajepfegjgbghgpfbdegpcaaaaaaaaaaaaaaiaaaaaaajepfegjgbghgpfcdegpcaaaaaaaaaaaaaaiaaaaaaadepfegchbghgpfadegpcaaaaaaaaaaaaaaiaaaaaaadepfegchbghgpfbdegpcaaaaaaaaaaaaaaiaaaaaaadepfegchbghgpfcdegpcaaaaaaaaaaaaaaabaaaaaabhfhbgehfgchogjgpgogpfchfgggpfadegpcaaaaaaaaaaaaaaabaaaaaabhfhbgehfgchogjgpgogpfchfgggpfbdegpcaaaaaaaaaaaaaaabaaaaaabhfhbgehfgchogjgpgogpfchfgggpfcdegpcaaaaaaaaaaaaaaabaaaaaabhfhbgehfgchogjgpgogpfchfgggpfddegpcaaaaaaaaaaaaaafaaaaaaabepfngpfadegpcaaaaaaaaaaaaaafaaaaaaabepfngpfbdegpcaaaaaaaaaaaaaafaaaaaaabepfngpfcdegpcaaaaaaaaaaaaaafaaaaaaabepfngpfddegpcaaaaaaaaaaaaaafaaaaaaabepfngpfedegpcaaaaaaaaaaaaaafaaaaaaabepfngpffdegpcaaaaaaaaaaaaaafaaaaaaabepfngpfgdegpcaaaaaaaaaaaaaafaaaaaaabepfngpfhdegpcaaaaaaaaaaaaaafaaaaaaabepfngpfidegpcaaaaaaaaaaaaaafaaaaaaabepfngpfjdegpcaaaaaaaaaaaaaagaaaaaaabepfngpfbdadegpcaaaaaaaaaaaaaagaaaaaaabepfngpfbdbdegpcaaaaaaaaaaaaaagaaaaaaabepfngpfbdcdegpcaaaaaaaaaaaaaagaaaaaaabepfngpfbdddegpcaaaaaaaaaaaaaagaaaaaaabepfngpfbdedegpcaaaaaaaaaaaaaafaaaaaaacgpfngpfadegpcaaaaaaaaaaaaaafaaaaaaacgpfngpfbdegpcaaaaaaaaaaaaaafaaaaaaacgpfngpfcdegpcaaaaaaaaaaaaaafaaaaaaacgpfngpfddegpcaaaaaaaaaaaaaafaaaaaaacgpfngpfed",
         "p_global": "jhpnnagiieahaaaadaaaaaaaaaaaaaaaaaegeaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         "t": [],
         "t0": null,
@@ -1511,7 +1567,27 @@
         1.0,
         0.0,
         0.0,
-        0.0
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        -100.0,
+        -100.0,
+        -100.0,
+        -100.0,
+        -100.0
     ],
     "problem_class": "OCP",
     "shared_lib_ext": ".so",

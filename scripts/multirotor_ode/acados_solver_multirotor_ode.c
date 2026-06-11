@@ -42,6 +42,7 @@
 #include "multirotor_ode_model/multirotor_ode_model.h"
 
 
+#include "multirotor_ode_constraints/multirotor_ode_constraints.h"
 #include "multirotor_ode_cost/multirotor_ode_cost.h"
 
 
@@ -340,6 +341,16 @@ void multirotor_ode_acados_create_setup_functions(multirotor_ode_solver_capsule*
 
 
     ext_fun_opts.external_workspace = true;
+    // constraints.constr_type == "BGH" and dims.nh > 0
+    capsule->nl_constr_h_fun_jac = (external_function_external_param_casadi *) malloc(sizeof(external_function_external_param_casadi)*(N-1));
+    for (int i = 0; i < N-1; i++) {
+        MAP_CASADI_FNC(nl_constr_h_fun_jac[i], multirotor_ode_constr_h_fun_jac_uxt_zt);
+    }
+    capsule->nl_constr_h_fun = (external_function_external_param_casadi *) malloc(sizeof(external_function_external_param_casadi)*(N-1));
+    for (int i = 0; i < N-1; i++) {
+        MAP_CASADI_FNC(nl_constr_h_fun[i], multirotor_ode_constr_h_fun);
+    }
+
     // nonlinear least squares function
     MAP_CASADI_FNC(cost_y_0_fun, multirotor_ode_cost_y_0_fun);
     MAP_CASADI_FNC(cost_y_0_fun_jac_ut_xt, multirotor_ode_cost_y_0_fun_jac_ut_xt);
@@ -414,6 +425,11 @@ void multirotor_ode_acados_create_set_default_parameters(multirotor_ode_solver_c
     p[34] = 0.001;
     p[35] = 0.0014;
     p[39] = 1;
+    p[58] = -100;
+    p[59] = -100;
+    p[60] = -100;
+    p[61] = -100;
+    p[62] = -100;
 
     for (int i = 0; i <= N; i++) {
         multirotor_ode_acados_update_params(capsule, i, p, NP);
@@ -613,6 +629,42 @@ void multirotor_ode_acados_setup_nlp_in(multirotor_ode_solver_capsule* capsule, 
 
 
 
+    // slacks
+    double* zlumem = calloc(4*NS, sizeof(double));
+    double* Zl = zlumem+NS*0;
+    double* Zu = zlumem+NS*1;
+    double* zl = zlumem+NS*2;
+    double* zu = zlumem+NS*3;
+    // change only the non-zero elements:
+    Zl[0] = 10000;
+    Zl[1] = 10000;
+    Zl[2] = 10000;
+    Zl[3] = 10000;
+    Zl[4] = 10000;
+    Zu[0] = 10000;
+    Zu[1] = 10000;
+    Zu[2] = 10000;
+    Zu[3] = 10000;
+    Zu[4] = 10000;
+    zl[0] = 1000;
+    zl[1] = 1000;
+    zl[2] = 1000;
+    zl[3] = 1000;
+    zl[4] = 1000;
+    zu[0] = 1000;
+    zu[1] = 1000;
+    zu[2] = 1000;
+    zu[3] = 1000;
+    zu[4] = 1000;
+
+    for (int i = 1; i < N; i++)
+    {
+        ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, i, "Zl", Zl);
+        ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, i, "Zu", Zu);
+        ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, i, "zl", zl);
+        ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, i, "zu", zu);
+    }
+    free(zlumem);
 
 
 
@@ -707,6 +759,25 @@ void multirotor_ode_acados_setup_nlp_in(multirotor_ode_solver_capsule* capsule, 
 
 
 
+    // set up soft bounds for nonlinear constraints
+    int* idxsh = malloc(NSH * sizeof(int));
+    idxsh[0] = 0;
+    idxsh[1] = 1;
+    idxsh[2] = 2;
+    idxsh[3] = 3;
+    idxsh[4] = 4;
+    double* lush = calloc(2*NSH, sizeof(double));
+    double* lsh = lush;
+    double* ush = lush + NSH;
+
+    for (int i = 1; i < N; i++)
+    {
+        ocp_nlp_constraints_model_set(nlp_config, nlp_dims, nlp_in, nlp_out, i, "idxsh", idxsh);
+        ocp_nlp_constraints_model_set(nlp_config, nlp_dims, nlp_in, nlp_out, i, "lsh", lsh);
+        ocp_nlp_constraints_model_set(nlp_config, nlp_dims, nlp_in, nlp_out, i, "ush", ush);
+    }
+    free(idxsh);
+    free(lush);
 
 
 
@@ -764,6 +835,29 @@ void multirotor_ode_acados_setup_nlp_in(multirotor_ode_solver_capsule* capsule, 
     free(lug);
 
 
+    // set up nonlinear constraints for stage 1 to N-1
+    double* luh = calloc(2*NH, sizeof(double));
+    double* lh = luh;
+    double* uh = luh + NH;
+    uh[0] = 10000;
+    uh[1] = 10000;
+    uh[2] = 10000;
+    uh[3] = 10000;
+    uh[4] = 10000;
+
+    for (int i = 1; i < N; i++)
+    {
+        ocp_nlp_constraints_model_set_external_param_fun(nlp_config, nlp_dims, nlp_in, i, "nl_constr_h_fun_jac",
+                                      &capsule->nl_constr_h_fun_jac[i-1]);
+        ocp_nlp_constraints_model_set_external_param_fun(nlp_config, nlp_dims, nlp_in, i, "nl_constr_h_fun",
+                                      &capsule->nl_constr_h_fun[i-1]);
+        
+        ocp_nlp_constraints_model_set(nlp_config, nlp_dims, nlp_in, nlp_out, i, "lh", lh);
+        ocp_nlp_constraints_model_set(nlp_config, nlp_dims, nlp_in, nlp_out, i, "uh", uh);
+        
+        
+    }
+    free(luh);
 
 
 
@@ -1071,7 +1165,7 @@ int multirotor_ode_acados_update_params(multirotor_ode_solver_capsule* capsule, 
 {
     int solver_status = 0;
 
-    int casadi_np = 43;
+    int casadi_np = 63;
     if (casadi_np != np) {
         printf("acados_update_params: trying to set %i parameters for external functions."
             " External function has %i parameters. Exiting.\n", np, casadi_np);
@@ -1163,6 +1257,13 @@ int multirotor_ode_acados_free(multirotor_ode_solver_capsule* capsule)
     external_function_external_param_casadi_free(&capsule->cost_y_e_fun_jac_ut_xt);
 
     // constraints
+    for (int i = 0; i < N-1; i++)
+    {
+        external_function_external_param_casadi_free(&capsule->nl_constr_h_fun_jac[i]);
+        external_function_external_param_casadi_free(&capsule->nl_constr_h_fun[i]);
+    }
+    free(capsule->nl_constr_h_fun_jac);
+    free(capsule->nl_constr_h_fun);
 
 
 

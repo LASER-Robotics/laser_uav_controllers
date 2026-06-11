@@ -193,6 +193,11 @@ int multirotor_ode_acados_sim_create(multirotor_ode_sim_solver_capsule * capsule
     p[34] = 0.001;
     p[35] = 0.0014;
     p[39] = 1;
+    p[58] = -100;
+    p[59] = -100;
+    p[60] = -100;
+    p[61] = -100;
+    p[62] = -100;
 
     multirotor_ode_acados_sim_update_params(capsule, p, np);
     free(p);

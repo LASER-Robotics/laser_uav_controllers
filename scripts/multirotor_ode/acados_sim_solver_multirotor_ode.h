@@ -37,7 +37,7 @@
 #define MULTIROTOR_ODE_NX     13
 #define MULTIROTOR_ODE_NZ     0
 #define MULTIROTOR_ODE_NU     8
-#define MULTIROTOR_ODE_NP     43
+#define MULTIROTOR_ODE_NP     63
 
 #ifdef __cplusplus
 extern "C" {

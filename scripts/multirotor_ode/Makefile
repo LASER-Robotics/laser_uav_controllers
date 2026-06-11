@@ -44,6 +44,8 @@ MODEL_OBJ := $(MODEL_SRC:.c=.o)
 OCP_SRC=
 
 
+OCP_SRC+= multirotor_ode_constraints/multirotor_ode_constr_h_fun_jac_uxt_zt.c
+OCP_SRC+= multirotor_ode_constraints/multirotor_ode_constr_h_fun.c
 OCP_SRC+= multirotor_ode_cost/multirotor_ode_cost_y_0_fun.c
 OCP_SRC+= multirotor_ode_cost/multirotor_ode_cost_y_0_fun_jac_ut_xt.c
 OCP_SRC+= multirotor_ode_cost/multirotor_ode_cost_y_0_hess.c
@@ -80,8 +82,8 @@ OBJ+= $(OCP_OBJ)
 EXTERNAL_DIR=
 EXTERNAL_LIB=
 
-INCLUDE_PATH = /home/augusto/laser_uav_system_ws/src/laser_uav_controllers/acados/include
-LIB_PATH = /home/augusto/laser_uav_system_ws/src/laser_uav_controllers/acados/lib
+INCLUDE_PATH = /home/conrado/laser_uav_system_ws/src/laser_uav_controllers/acados/include
+LIB_PATH = /home/conrado/laser_uav_system_ws/src/laser_uav_controllers/acados/lib
 
 # preprocessor flags for make's implicit rules
 CPPFLAGS+= -I$(INCLUDE_PATH)
@@ -141,7 +143,7 @@ ocp_cython_c: ocp_shared_lib
 	-o acados_ocp_solver_pyx.c \
 	-I $(INCLUDE_PATH)/../interfaces/acados_template/acados_template \
 	$(INCLUDE_PATH)/../interfaces/acados_template/acados_template/acados_ocp_solver_pyx.pyx \
-	-I /home/augusto/git/laser_uav_system/.gitman/laser_uav_controllers/scripts/multirotor_ode \
+	-I /home/conrado/git/laser_uav_system/.gitman/laser_uav_controllers/scripts/multirotor_ode \
 
 ocp_cython_o: ocp_cython_c
 	$(CC) $(ACADOS_FLAGS) -c -O2 \
@@ -150,7 +152,7 @@ ocp_cython_o: ocp_cython_c
 	-I $(INCLUDE_PATH)/blasfeo/include/ \
 	-I $(INCLUDE_PATH)/hpipm/include/ \
 	-I $(INCLUDE_PATH) \
-	-I /home/augusto/.local/lib/python3.10/site-packages/numpy/core/include \
+	-I /usr/lib/python3/dist-packages/numpy/core/include \
 	-I /usr/include/python3.10 \
 	acados_ocp_solver_pyx.c \
 
@@ -169,7 +171,7 @@ sim_cython_c: sim_shared_lib
 	-o acados_sim_solver_pyx.c \
 	-I $(INCLUDE_PATH)/../interfaces/acados_template/acados_template \
 	$(INCLUDE_PATH)/../interfaces/acados_template/acados_template/acados_sim_solver_pyx.pyx \
-	-I /home/augusto/git/laser_uav_system/.gitman/laser_uav_controllers/scripts/multirotor_ode \
+	-I /home/conrado/git/laser_uav_system/.gitman/laser_uav_controllers/scripts/multirotor_ode \
 
 sim_cython_o: sim_cython_c
 	$(CC) $(ACADOS_FLAGS) -c -O2 \
@@ -178,7 +180,7 @@ sim_cython_o: sim_cython_c
 	-I $(INCLUDE_PATH)/blasfeo/include/ \
 	-I $(INCLUDE_PATH)/hpipm/include/ \
 	-I $(INCLUDE_PATH) \
-	-I /home/augusto/.local/lib/python3.10/site-packages/numpy/core/include \
+	-I /usr/lib/python3/dist-packages/numpy/core/include \
 	-I /usr/include/python3.10 \
 	acados_sim_solver_pyx.c \
 

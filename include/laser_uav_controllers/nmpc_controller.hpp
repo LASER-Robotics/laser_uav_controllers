@@ -46,6 +46,7 @@ public:
 
   std::pair<Eigen::Vector3d, Eigen::VectorXd> getCorrection(laser_msgs::msg::ReferenceState reference, const nav_msgs::msg::Odometry msg);
   std::pair<Eigen::Vector3d, Eigen::VectorXd> getCorrection(std::vector<laser_msgs::msg::ReferenceState> trajectory, const nav_msgs::msg::Odometry msg);
+  void                                        setRVCConstraints(const std::vector<double>& Am, const std::vector<double>& bm, const std::vector<double>& tv_m);
 
   std::vector<double> getLastIndividualThrust();
   void                setMass(double mass);
@@ -104,9 +105,18 @@ private:
     qw_reference = 39,
     qx_reference = 40,
     qy_reference = 41,
-    qz_reference = 42
+    qz_reference = 42,
+
+    rvc_Am_start = 43,
+    rvc_bm_start = 58
   };
   //}
+
+  std::vector<double> rvc_Am_   = std::vector<double>(15, 0.0);
+  std::vector<double> rvc_bm_   = std::vector<double>(5, -100.0);
+  std::vector<double> rvc_tv_m_ = std::vector<double>(5, 0.0);
+  
+  double dt_rvc_;
 
   int N;
 
@@ -123,7 +133,7 @@ private:
 
   double parameters_[NP] = {0};
 
-  multirotor_ode_solver_capsule *acados_ocp_capsule;
+  multirotor_ode_solver_capsule* acados_ocp_capsule;
 
   bool angular_rates_and_thrust_mode_;
 };

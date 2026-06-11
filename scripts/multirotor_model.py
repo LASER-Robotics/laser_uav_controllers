@@ -1,5 +1,5 @@
 from acados_template import AcadosModel
-from casadi import DM, MX, SX, vertcat, sin, cos, Function, inv, cross, mtimes, diag, sqrt, norm_2, reshape
+from casadi import DM, MX, SX, vertcat, sin, cos, Function, inv, cross, mtimes, diag, sqrt, norm_2, reshape, dot
 import numpy as np
 
 def quaternion_multiplication(q1,q2):
@@ -75,8 +75,33 @@ def export_multirotor_ode_model() -> AcadosModel:
     w_dot = SX.sym('w_dot', 3)      # angular velocity derivation
     xdot = vertcat(p_dot, q_dot, v_dot, w_dot) # system's states derivation
 
+    MAX_OBSTACLES = 5
+    
+    # 1. Criação das variáveis simbólicas com os novos tamanhos
+    A_m = SX.sym('A_m', 3 * MAX_OBSTACLES) 
+    b_m = SX.sym('b_m', MAX_OBSTACLES)
+    
+    # 2. Criação da equação de restrição h
+    h_list = [] # Usamos uma lista normal do Python
+    
+    # Fazemos um loop para montar uma equação h para cada obstáculo
+    for i in range(MAX_OBSTACLES):
+        # Puxa o vetor 3D e o escalar correspondentes ao obstáculo 'i'
+        A_i = A_m[i*3 : (i+1)*3]  # Pega de 3 em 3
+        b_i = b_m[i]
+        
+        # Equação clássica do RVC para este obstáculo (usando 'v')
+        h_i = dot(A_i, v) - b_i
+        
+        # Guarda na lista
+        h_list.append(h_i)
+        
+    # Concatena a lista toda de uma vez só (Forma 100% segura no CasADi)
+    h_rvc = vertcat(*h_list) 
+
+    # ADICIONAMOS NO VETOR 'par' (Isso vai mudar o tamanho dele de 43 para 55!)
     # Parameters definition
-    par = vertcat(m, reshape(G1, -1, 1), I_diag, C_drag, quaternion_ref)
+    par = vertcat(m, reshape(G1, -1, 1), I_diag, C_drag, quaternion_ref, A_m, b_m)
 
     g_ = 9.806
     g = SX([0, 0, -g_])             # gravity acceleration
@@ -84,14 +109,6 @@ def export_multirotor_ode_model() -> AcadosModel:
     a_drag = SX.zeros(3)
 
     q_normalized = q/norm_2(q)
-    # q_conj = vertcat(q_normalized[0], -q_normalized[1], -q_normalized[2], -q_normalized[3])
-    # # q_conj = q_conj/norm_1(q_conj)
-    # print(q_conj)
-    # v_body = rotate_quaternion(q_conj, v)
-    # print(v_body)
-    # f_drag_body = (C_drag/m) * v_body
-    # print(f_drag_body)
-    # a_drag = rotate_quaternion(q_normalized, f_drag_body)
 
     wrench = mtimes(G1.T, T)
     tau = vertcat(wrench[1:])
@@ -104,21 +121,22 @@ def export_multirotor_ode_model() -> AcadosModel:
     dot_w = mtimes(I_inv, tau - cross( w, mtimes(I, w))) # I_inv * (AT - w X Iw)
 
     f_expl = vertcat(dot_p, dot_q, dot_v, dot_w)
-
     f_impl = xdot - f_expl
-
+    
+    # 3. CRIAÇÃO DO MODELO E ATRIBUIÇÃO
     model = AcadosModel()
-    print(type(f_expl))
-    print(isinstance(f_expl, SX))
+   
+    model.con_h_expr = h_rvc
+    
     model.f_impl_expr = f_impl # explicit dynamics
     model.f_expl_expr = f_expl # implicit dynamics
+    
     q_att = quaternion_error(q_normalized, quaternion_ref)
     model.cost_y_expr = vertcat(p, q_att, v, w, u)
     model.cost_y_expr_e = vertcat(p, q_att, v, w)
     model.x = x
     model.xdot = xdot
     model.u = u
-    # model.z = z
     model.p = par
     model.name = model_name
 

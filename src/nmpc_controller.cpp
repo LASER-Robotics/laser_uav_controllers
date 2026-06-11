@@ -18,6 +18,7 @@ NmpcController::NmpcController(multirotor_t multirotor_params, acados_t acados_p
   std::cout << "creating acados ocp solver" << std::endl;
   acados_ocp_capsule = multirotor_ode_acados_create_capsule();
   N                  = acados_params.N;
+  dt_rvc_            = acados_params.dt;
 
   double* dt = new double[N];
   std::fill_n(dt, N, (N * acados_params.dt) / N);
@@ -169,8 +170,8 @@ void NmpcController::setInitSolution() {
 void NmpcController::setTrajectory(std::vector<laser_msgs::msg::ReferenceState> trajectory) {
   double yref_for_acados[NY] = {0};
 
-  for (auto i = 0; i <= N; i++) {
-    auto j = i;
+  for (auto k = 0; k <= N; k++) {
+    auto j = k;
     if ((int)trajectory.size() != N + 1) {
       j = 0;
     }
@@ -201,18 +202,51 @@ void NmpcController::setTrajectory(std::vector<laser_msgs::msg::ReferenceState> 
     yref_for_acados[10] = trajectory[j].use_angular_velocity ? trajectory[j].twist.angular.y : 0.00;
     yref_for_acados[11] = trajectory[j].use_angular_velocity ? trajectory[j].twist.angular.z : 0.00;
 
-    // --- Set Initial Thrust Reference
-    for (auto i = 0; i < 8; i++) {
-      if (i < n_motors_) {
-        yref_for_acados[i + 12] = trajectory[j].use_individual_thrust ? trajectory[j].individual_thrust.data[i] : hover_thrust_;
+    // --- Set Initial Thrust Reference (Variável m para motores)
+    for (auto m = 0; m < 8; m++) {
+      if (m < n_motors_) {
+        yref_for_acados[m + 12] = trajectory[j].use_individual_thrust ? trajectory[j].individual_thrust.data[m] : hover_thrust_;
       } else {
-        yref_for_acados[i + 12] = 0.0;
+        yref_for_acados[m + 12] = 0.0;
       }
     }
 
-    // --- Set Reference in Acados
-    ocp_nlp_cost_model_set(acados_ocp_capsule->nlp_config, acados_ocp_capsule->nlp_dims, acados_ocp_capsule->nlp_in, i, "yref", yref_for_acados);
-    multirotor_ode_acados_update_params(acados_ocp_capsule, i, parameters_, NP);
+    double t_k = k * dt_rvc_;
+
+    for (int idx = 0; idx < 15; idx++) {
+      if (rvc_tv_m_[idx / 3] > t_k) {
+        parameters_[params_e::rvc_Am_start + idx] = rvc_Am_[idx];
+      } else {
+        parameters_[params_e::rvc_Am_start + idx] = 0.0;
+      }
+    }
+
+    for (int idx = 0; idx < 5; idx++) {
+      if (rvc_tv_m_[idx] > t_k) {
+        parameters_[params_e::rvc_bm_start + idx] = rvc_bm_[idx];
+      } else {
+        parameters_[params_e::rvc_bm_start + idx] = -100.0;
+      }
+    }
+
+    ocp_nlp_cost_model_set(acados_ocp_capsule->nlp_config, acados_ocp_capsule->nlp_dims, acados_ocp_capsule->nlp_in, k, "yref", yref_for_acados);
+    multirotor_ode_acados_update_params(acados_ocp_capsule, k, parameters_, NP);
+  }
+}
+//}
+
+/* setRVCConstraints() //{ */
+void NmpcController::setRVCConstraints(const std::vector<double>& Am, const std::vector<double>& bm, const std::vector<double>& tv_m) {
+  rvc_Am_   = Am;
+  rvc_bm_   = bm;
+  rvc_tv_m_ = tv_m;
+
+  for (int i = 0; i < 15; i++) {
+    parameters_[rvc_Am_start + i] = rvc_Am_[i];
+  }
+
+  for (int i = 0; i < 5; i++) {
+    parameters_[rvc_bm_start + i] = rvc_bm_[i];
   }
 }
 //}

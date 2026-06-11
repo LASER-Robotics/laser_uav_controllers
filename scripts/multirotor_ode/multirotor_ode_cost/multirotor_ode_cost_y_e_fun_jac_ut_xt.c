@@ -57,7 +57,7 @@ casadi_real casadi_sq(casadi_real x) { return x*x;}
 
 static const casadi_int casadi_s0[3] = {13, 1, 1};
 static const casadi_int casadi_s1[3] = {0, 0, 1};
-static const casadi_int casadi_s2[3] = {43, 1, 1};
+static const casadi_int casadi_s2[3] = {63, 1, 1};
 static const casadi_int casadi_s3[3] = {12, 1, 1};
 static const casadi_int casadi_s4[36] = 
   {13, 12, 0, 1, 2, 3, 7, 11,
@@ -67,7 +67,7 @@ static const casadi_int casadi_s4[36] =
   9, 10, 11, 12};
 static const casadi_int casadi_s5[3] = {12, 0, 1};
 
-/* multirotor_ode_cost_y_e_fun_jac_ut_xt:(i0[13],i1[],i2[],i3[],i4[43])->(o0[12],o1[13x12,21nz],o2[12x0]) */
+/* multirotor_ode_cost_y_e_fun_jac_ut_xt:(i0[13],i1[],i2[],i3[],i4[63])->(o0[12],o1[13x12,21nz],o2[12x0]) */
 static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, int mem) {
   casadi_real a00, a01, a02, a03, a04, a05, a06, a07, a08, a09, a10, a11;
   casadi_real a12, a13, a14, a15, a16, a17, a18, a19, a20, a21, a22, a23;

@@ -39,14 +39,14 @@
 #define MULTIROTOR_ODE_NX     13
 #define MULTIROTOR_ODE_NZ     0
 #define MULTIROTOR_ODE_NU     8
-#define MULTIROTOR_ODE_NP     43
+#define MULTIROTOR_ODE_NP     63
 #define MULTIROTOR_ODE_NP_GLOBAL     0
 #define MULTIROTOR_ODE_NBX    3
 #define MULTIROTOR_ODE_NBX0   13
 #define MULTIROTOR_ODE_NBU    8
 #define MULTIROTOR_ODE_NSBX   0
 #define MULTIROTOR_ODE_NSBU   0
-#define MULTIROTOR_ODE_NSH    0
+#define MULTIROTOR_ODE_NSH    5
 #define MULTIROTOR_ODE_NSH0   0
 #define MULTIROTOR_ODE_NSG    0
 #define MULTIROTOR_ODE_NSPHI  0
@@ -55,7 +55,7 @@
 #define MULTIROTOR_ODE_NSPHIN 0
 #define MULTIROTOR_ODE_NSPHI0 0
 #define MULTIROTOR_ODE_NSBXN  0
-#define MULTIROTOR_ODE_NS     0
+#define MULTIROTOR_ODE_NS     5
 #define MULTIROTOR_ODE_NS0    0
 #define MULTIROTOR_ODE_NSN    0
 #define MULTIROTOR_ODE_NG     1
@@ -65,7 +65,7 @@
 #define MULTIROTOR_ODE_NY     20
 #define MULTIROTOR_ODE_NYN    12
 #define MULTIROTOR_ODE_N      30
-#define MULTIROTOR_ODE_NH     0
+#define MULTIROTOR_ODE_NH     5
 #define MULTIROTOR_ODE_NHN    0
 #define MULTIROTOR_ODE_NH0    0
 #define MULTIROTOR_ODE_NPHI0  0
@@ -122,6 +122,10 @@ typedef struct multirotor_ode_solver_capsule
 
 
     // constraints
+    external_function_external_param_casadi *nl_constr_h_fun_jac;
+    external_function_external_param_casadi *nl_constr_h_fun;
+
+
 
 
 

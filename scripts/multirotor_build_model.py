@@ -28,7 +28,14 @@ G1 = [1,1,1,1,0,0,0,0,
       -0.185, 0.185, 0.185, -0.185, 0, 0, 0, 0,
       0.18, -0.18, -0.18, 0.18, 0, 0, 0, 0,
       -0.59, -0.59, 0.59, 0.59, 0,0,0,0]
-ocp.parameter_values = np.concatenate([[mass], G1, inertia, C_drag, q_ref_init])
+
+MAX_OBSTACLES = 5
+
+#Colision avoidance variables
+A_m_init = np.zeros(3 * MAX_OBSTACLES) 
+b_m_init = np.ones(MAX_OBSTACLES) * -100.0 
+
+ocp.parameter_values = np.concatenate([[mass], G1, inertia, C_drag, q_ref_init, A_m_init, b_m_init])
 
 #Constraints
 omega_max = np.array([10.0, 10.0, 4.0])  # [rad/s]
@@ -58,6 +65,16 @@ ocp.constraints.C = np.zeros((1, nx))
 ocp.constraints.ug = np.ones((1)) * thrust_total_max
 # print(np.ones((1)) * thrust_total_max)
 ocp.constraints.lg = np.ones((1)) * thrust_total_min
+
+ocp.constraints.lh = np.zeros(MAX_OBSTACLES)       
+ocp.constraints.uh = np.ones(MAX_OBSTACLES) * 10000.0   
+
+ocp.constraints.idxsh = np.arange(MAX_OBSTACLES) 
+
+ocp.cost.Zl = np.ones(MAX_OBSTACLES) * 1e4 
+ocp.cost.Zu = np.ones(MAX_OBSTACLES) * 1e4 
+ocp.cost.zl = np.ones(MAX_OBSTACLES) * 1e3
+ocp.cost.zu = np.ones(MAX_OBSTACLES) * 1e3
 
 init_state = np.zeros([nx])
 init_state[3] = 1 # quaternion must be unitary
