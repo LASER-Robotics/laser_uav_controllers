@@ -53,6 +53,11 @@ ocp.constraints.Jbx = Jbx
 ocp.constraints.lbx = -1*omega_max
 ocp.constraints.ubx = omega_max
 
+# Angular-rate bounds also apply to the terminal state x_N (paper, Eq. 11).
+ocp.constraints.Jbx_e = Jbx.copy()
+ocp.constraints.lbx_e = -omega_max.copy()
+ocp.constraints.ubx_e = omega_max.copy()
+
 lk = np.array([1,1,1,1,1,1,1,1])
 # lk = np.array([1,1,1,1])
 Jbu = np.identity(nu) # matrix for assigning thrust constrain matrix to corresponding input variables
@@ -75,6 +80,15 @@ ocp.cost.Zl = np.ones(MAX_OBSTACLES) * 1e4
 ocp.cost.Zu = np.ones(MAX_OBSTACLES) * 1e4 
 ocp.cost.zl = np.ones(MAX_OBSTACLES) * 1e3
 ocp.cost.zu = np.ones(MAX_OBSTACLES) * 1e3
+
+# Include the same soft RVCs at x_N (paper, Eq. 14).
+ocp.constraints.lh_e = ocp.constraints.lh.copy()
+ocp.constraints.uh_e = ocp.constraints.uh.copy()
+ocp.constraints.idxsh_e = ocp.constraints.idxsh.copy()
+ocp.cost.Zl_e = ocp.cost.Zl.copy()
+ocp.cost.Zu_e = ocp.cost.Zu.copy()
+ocp.cost.zl_e = ocp.cost.zl.copy()
+ocp.cost.zu_e = ocp.cost.zu.copy()
 
 init_state = np.zeros([nx])
 init_state[3] = 1 # quaternion must be unitary

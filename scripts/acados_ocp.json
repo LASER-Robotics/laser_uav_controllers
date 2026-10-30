@@ -1,7 +1,7 @@
 {
     "acados_include_path": "/home/conrado/laser_uav_system_ws/src/laser_uav_controllers/acados/include",
     "acados_lib_path": "/home/conrado/laser_uav_system_ws/src/laser_uav_controllers/acados/lib",
-    "code_export_directory": "/home/conrado/git/laser_uav_system/.gitman/laser_uav_controllers/scripts/multirotor_ode",
+    "code_export_directory": "/home/conrado/laser_uav_system_ws/src/laser_uav_controllers/scripts/multirotor_ode",
     "constraints": {
         "C": [
             [
@@ -67,7 +67,11 @@
             11,
             12
         ],
-        "idxbx_e": [],
+        "idxbx_e": [
+            10.0,
+            11.0,
+            12.0
+        ],
         "idxbxe_0": [
             0,
             1,
@@ -96,7 +100,13 @@
             4
         ],
         "idxsh_0": [],
-        "idxsh_e": [],
+        "idxsh_e": [
+            0,
+            1,
+            2,
+            3,
+            4
+        ],
         "idxsphi": [],
         "idxsphi_0": [],
         "idxsphi_e": [],
@@ -130,7 +140,11 @@
             0.0,
             0.0
         ],
-        "lbx_e": [],
+        "lbx_e": [
+            -10.0,
+            -10.0,
+            -4.0
+        ],
         "lg": [
             0.0
         ],
@@ -143,7 +157,13 @@
             0.0
         ],
         "lh_0": [],
-        "lh_e": [],
+        "lh_e": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+        ],
         "lphi": [],
         "lphi_0": [],
         "lphi_e": [],
@@ -160,7 +180,13 @@
             0.0
         ],
         "lsh_0": [],
-        "lsh_e": [],
+        "lsh_e": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+        ],
         "lsphi": [],
         "lsphi_0": [],
         "lsphi_e": [],
@@ -194,7 +220,11 @@
             0.0,
             0.0
         ],
-        "ubx_e": [],
+        "ubx_e": [
+            10.0,
+            10.0,
+            4.0
+        ],
         "ug": [
             62.8
         ],
@@ -207,7 +237,13 @@
             10000.0
         ],
         "uh_0": [],
-        "uh_e": [],
+        "uh_e": [
+            10000.0,
+            10000.0,
+            10000.0,
+            10000.0,
+            10000.0
+        ],
         "uphi": [],
         "uphi_0": [],
         "uphi_e": [],
@@ -224,7 +260,13 @@
             0.0
         ],
         "ush_0": [],
-        "ush_e": [],
+        "ush_e": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+        ],
         "usphi": [],
         "usphi_0": [],
         "usphi_e": []
@@ -1299,7 +1341,13 @@
             10000.0
         ],
         "Zl_0": [],
-        "Zl_e": [],
+        "Zl_e": [
+            10000.0,
+            10000.0,
+            10000.0,
+            10000.0,
+            10000.0
+        ],
         "Zu": [
             10000.0,
             10000.0,
@@ -1308,7 +1356,13 @@
             10000.0
         ],
         "Zu_0": [],
-        "Zu_e": [],
+        "Zu_e": [
+            10000.0,
+            10000.0,
+            10000.0,
+            10000.0,
+            10000.0
+        ],
         "cost_ext_fun_type": "casadi",
         "cost_ext_fun_type_0": "casadi",
         "cost_ext_fun_type_e": "casadi",
@@ -1387,7 +1441,13 @@
             1000.0
         ],
         "zl_0": [],
-        "zl_e": [],
+        "zl_e": [
+            1000.0,
+            1000.0,
+            1000.0,
+            1000.0,
+            1000.0
+        ],
         "zu": [
             1000.0,
             1000.0,
@@ -1396,10 +1456,16 @@
             1000.0
         ],
         "zu_0": [],
-        "zu_e": []
+        "zu_e": [
+            1000.0,
+            1000.0,
+            1000.0,
+            1000.0,
+            1000.0
+        ]
     },
     "cython_include_dirs": [
-        "/usr/lib/python3/dist-packages/numpy/core/include",
+        "/home/conrado/.local/lib/python3.10/site-packages/numpy/core/include",
         "/usr/include/python3.10"
     ],
     "dims": {
@@ -1408,13 +1474,13 @@
         "nbu": 8,
         "nbx": 3,
         "nbx_0": 13,
-        "nbx_e": 0,
+        "nbx_e": 3,
         "nbxe_0": 13,
         "ng": 1,
         "ng_e": 0,
         "nh": 5,
         "nh_0": 0,
-        "nh_e": 0,
+        "nh_e": 5,
         "np": 63,
         "np_global": 0,
         "nphi": 0,
@@ -1425,7 +1491,7 @@
         "nr_e": 0,
         "ns": 5,
         "ns_0": 0,
-        "ns_e": 0,
+        "ns_e": 5,
         "nsbu": 0,
         "nsbx": 0,
         "nsbx_e": 0,
@@ -1433,7 +1499,7 @@
         "nsg_e": 0,
         "nsh": 5,
         "nsh_0": 0,
-        "nsh_e": 0,
+        "nsh_e": 5,
         "nsphi": 0,
         "nsphi_0": 0,
         "nsphi_e": 0,
@@ -1453,6 +1519,8 @@
     "external_function_files_ocp": [
         "multirotor_ode_constraints/multirotor_ode_constr_h_fun_jac_uxt_zt.c",
         "multirotor_ode_constraints/multirotor_ode_constr_h_fun.c",
+        "multirotor_ode_constraints/multirotor_ode_constr_h_e_fun_jac_uxt_zt.c",
+        "multirotor_ode_constraints/multirotor_ode_constr_h_e_fun.c",
         "multirotor_ode_cost/multirotor_ode_cost_y_0_fun.c",
         "multirotor_ode_cost/multirotor_ode_cost_y_0_fun_jac_ut_xt.c",
         "multirotor_ode_cost/multirotor_ode_cost_y_0_hess.c",
@@ -1467,7 +1535,7 @@
     "model": {
         "con_h_expr": "jhpnnagiieahaaaadaaaaaaaaaaaaaaaaaegjaaaaaaaaaaaaaaafaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaafaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaacaaaaaaaaaaaaaaadaaaaaaaaaaaaaaaeaaaaaaaaaaaaaaafaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaegdaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaafaaaaaaabepfngpfadegpcaaaaaaaaaaaaaadaaaaaaaghpfadegdaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaafaaaaaaabepfngpfbdegpcaaaaaaaaaaaaaadaaaaaaaghpfbdegdaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaafaaaaaaabepfngpfcdegpcaaaaaaaaaaaaaadaaaaaaaghpfcdegpcaaaaaaaaaaaaaafaaaaaaacgpfngpfadegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaegdaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaafaaaaaaabepfngpfddchcaaaaaaaaaaaaaaaegdaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaafaaaaaaabepfngpfedchfaaaaaaaaaaaaaaaegdaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaafaaaaaaabepfngpffdchjaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaafaaaaaaacgpfngpfbdegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaegdaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaafaaaaaaabepfngpfgdchcaaaaaaaaaaaaaaaegdaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaafaaaaaaabepfngpfhdchfaaaaaaaaaaaaaaaegdaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaafaaaaaaabepfngpfidchjaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaafaaaaaaacgpfngpfcdegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaegdaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaafaaaaaaabepfngpfjdchcaaaaaaaaaaaaaaaegdaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaagaaaaaaabepfngpfbdadchfaaaaaaaaaaaaaaaegdaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaagaaaaaaabepfngpfbdbdchjaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaafaaaaaaacgpfngpfddegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaegdaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaagaaaaaaabepfngpfbdcdchcaaaaaaaaaaaaaaaegdaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaagaaaaaaabepfngpfbdddchfaaaaaaaaaaaaaaaegdaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaagaaaaaaabepfngpfbdedchjaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaafaaaaaaacgpfngpfed",
         "con_h_expr_0": [],
-        "con_h_expr_e": [],
+        "con_h_expr_e": "jhpnnagiieahaaaadaaaaaaaaaaaaaaaaaegjaaaaaaaaaaaaaaafaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaafaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaacaaaaaaaaaaaaaaadaaaaaaaaaaaaaaaeaaaaaaaaaaaaaaafaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaegdaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaafaaaaaaabepfngpfadegpcaaaaaaaaaaaaaadaaaaaaaghpfadegdaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaafaaaaaaabepfngpfbdegpcaaaaaaaaaaaaaadaaaaaaaghpfbdegdaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaafaaaaaaabepfngpfcdegpcaaaaaaaaaaaaaadaaaaaaaghpfcdegpcaaaaaaaaaaaaaafaaaaaaacgpfngpfadegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaegdaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaafaaaaaaabepfngpfddchcaaaaaaaaaaaaaaaegdaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaafaaaaaaabepfngpfedchfaaaaaaaaaaaaaaaegdaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaafaaaaaaabepfngpffdchjaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaafaaaaaaacgpfngpfbdegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaegdaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaafaaaaaaabepfngpfgdchcaaaaaaaaaaaaaaaegdaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaafaaaaaaabepfngpfhdchfaaaaaaaaaaaaaaaegdaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaafaaaaaaabepfngpfidchjaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaafaaaaaaacgpfngpfcdegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaegdaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaafaaaaaaabepfngpfjdchcaaaaaaaaaaaaaaaegdaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaagaaaaaaabepfngpfbdadchfaaaaaaaaaaaaaaaegdaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaagaaaaaaabepfngpfbdbdchjaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaafaaaaaaacgpfngpfddegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaegdaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaagaaaaaaabepfngpfbdcdchcaaaaaaaaaaaaaaaegdaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaagaaaaaaabepfngpfbdddchfaaaaaaaaaaaaaaaegdaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaagaaaaaaabepfngpfbdedchjaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaafaaaaaaacgpfngpfed",
         "con_phi_expr": [],
         "con_phi_expr_0": [],
         "con_phi_expr_e": [],

@@ -127,6 +127,7 @@ def export_multirotor_ode_model() -> AcadosModel:
     model = AcadosModel()
    
     model.con_h_expr = h_rvc
+    model.con_h_expr_e = h_rvc
     
     model.f_impl_expr = f_impl # explicit dynamics
     model.f_expl_expr = f_expl # implicit dynamics

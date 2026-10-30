@@ -50,23 +50,23 @@
 #define MULTIROTOR_ODE_NSH0   0
 #define MULTIROTOR_ODE_NSG    0
 #define MULTIROTOR_ODE_NSPHI  0
-#define MULTIROTOR_ODE_NSHN   0
+#define MULTIROTOR_ODE_NSHN   5
 #define MULTIROTOR_ODE_NSGN   0
 #define MULTIROTOR_ODE_NSPHIN 0
 #define MULTIROTOR_ODE_NSPHI0 0
 #define MULTIROTOR_ODE_NSBXN  0
 #define MULTIROTOR_ODE_NS     5
 #define MULTIROTOR_ODE_NS0    0
-#define MULTIROTOR_ODE_NSN    0
+#define MULTIROTOR_ODE_NSN    5
 #define MULTIROTOR_ODE_NG     1
-#define MULTIROTOR_ODE_NBXN   0
+#define MULTIROTOR_ODE_NBXN   3
 #define MULTIROTOR_ODE_NGN    0
 #define MULTIROTOR_ODE_NY0    20
 #define MULTIROTOR_ODE_NY     20
 #define MULTIROTOR_ODE_NYN    12
 #define MULTIROTOR_ODE_N      30
 #define MULTIROTOR_ODE_NH     5
-#define MULTIROTOR_ODE_NHN    0
+#define MULTIROTOR_ODE_NHN    5
 #define MULTIROTOR_ODE_NH0    0
 #define MULTIROTOR_ODE_NPHI0  0
 #define MULTIROTOR_ODE_NPHI   0
@@ -130,6 +130,10 @@ typedef struct multirotor_ode_solver_capsule
 
 
 
+
+
+    external_function_external_param_casadi nl_constr_h_e_fun_jac;
+    external_function_external_param_casadi nl_constr_h_e_fun;
 
 
 

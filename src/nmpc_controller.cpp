@@ -109,7 +109,8 @@ NmpcController::NmpcController(multirotor_t multirotor_params, acados_t acados_p
   omega_min[1] = -multirotor_params.omega_max(1);
   omega_min[2] = -multirotor_params.omega_max(2);
 
-  for (int i = 0; i < N; i++) {
+  // State bounds cover x_1 through x_N; x_0 is fixed by setInitState().
+  for (int i = 1; i <= N; i++) {
     ocp_nlp_constraints_model_set(acados_ocp_capsule->nlp_config, acados_ocp_capsule->nlp_dims, acados_ocp_capsule->nlp_in, acados_ocp_capsule->nlp_out, i,
                                   "ubx", omega_max);
     ocp_nlp_constraints_model_set(acados_ocp_capsule->nlp_config, acados_ocp_capsule->nlp_dims, acados_ocp_capsule->nlp_in, acados_ocp_capsule->nlp_out, i,
@@ -214,7 +215,7 @@ void NmpcController::setTrajectory(std::vector<laser_msgs::msg::ReferenceState> 
     double t_k = k * dt_rvc_;
 
     for (int idx = 0; idx < 15; idx++) {
-      if (rvc_tv_m_[idx / 3] > t_k) {
+      if (rvc_tv_m_[idx / 3] >= t_k) {
         parameters_[params_e::rvc_Am_start + idx] = rvc_Am_[idx];
       } else {
         parameters_[params_e::rvc_Am_start + idx] = 0.0;
@@ -222,7 +223,7 @@ void NmpcController::setTrajectory(std::vector<laser_msgs::msg::ReferenceState> 
     }
 
     for (int idx = 0; idx < 5; idx++) {
-      if (rvc_tv_m_[idx] > t_k) {
+      if (rvc_tv_m_[idx] >= t_k) {
         parameters_[params_e::rvc_bm_start + idx] = rvc_bm_[idx];
       } else {
         parameters_[params_e::rvc_bm_start + idx] = -100.0;
